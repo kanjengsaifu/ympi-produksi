@@ -7,6 +7,8 @@
     <script src="assets/js/jquery.min.js"></script>
     <!-- Bootstrap 4.1 -->
     <script src="assets/js/bootstrap.min.js"></script>
+    <!-- FontAwesome -->
+    <script src="assets/js/font-awesome.min.js" data-auto-replace-svg="nest"></script>
     <!-- FusionCharts -->
     <script src="assets/js/fusioncharts.js"></script>
     <script src="assets/js/jquery-fusioncharts.min.js"></script>
@@ -20,13 +22,22 @@
         <div class="row h-100 justify-content-center align-items-center">
             <div class="col-12">
                 <div id="chart-container" class="text-center">Chart will load here!</div>
+                <div class="text-right">
+                    <button id="btn-close" class='btn btn-danger'>
+                        <i class="fas fa-arrow-alt-circle-left"></i> Back
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-
     <!-- Main Script -->
     <script type="text/javascript">
+    // Function for rendering main chart
     var renderMainChart = function(data) {
+        // hide close btn
+        $('#btn-close').addClass('d-none');
+
+        // main action
         $('#chart-container').insertFusionCharts({
             type: 'mscolumn2d',
             width: 1024,
@@ -56,12 +67,67 @@
                         "data": data.minus
                     }
                 ]
+            },
+            "events": {
+                "dataPlotClick": function(eventObj, dataObj) {
+                    var finalData = {}
+                    $.ajax({
+                        type: 'POST',
+                        url: 'api/postData.php',
+                        dataType: "json",
+                        data: {
+                            id: dataObj.dataIndex + 1
+                        },
+                        success: function(res) {
+                            var response = res.result;
+
+                            // Populate datas
+                            finalData.subt = "Tanggal " + moment(response.tanggal).utc().format('DD MMMM YY')
+                            finalData.categories = [{
+                                "label": "FL"
+                            }, {
+                                "label": "CL"
+                            }, {
+                                "label": "AS"
+                            }, {
+                                "label": "TS"
+                            }];
+
+                            finalData.surplus = [{
+                                "value": response.fl_plus
+                            }, {
+                                "value": response.cl_plus
+                            }, {
+                                "value": response.as_plus
+                            }, {
+                                "value": response.ts_plus
+                            }];
+
+                            finalData.minus = [{
+                                "value": "-" + response.fl_minus
+                            }, {
+                                "value": "-" + response.cl_minus
+                            }, {
+                                "value": "-" + response.as_minus
+                            }, {
+                                "value": "-" + response.ts_minus
+                            }];
+
+                            // Render the Extended Chart
+                            renderExtChart(finalData);
+                        }
+                    })
+                }
             }
         });
     }
 
     // Render extended chart
     var renderExtChart = function(data) {
+        // hide close btn
+        $('#btn-close').removeClass('d-none');
+
+        // main action
         $('#chart-container').insertFusionCharts({
             type: 'mscolumn2d',
             width: 1024,
@@ -70,8 +136,8 @@
             dataSource: {
                 "chart": {
                     "caption": "Perolehan Produksi",
-                    "subCaption": "Minggu ke 35",
-                    "xAxisName": "Tanggal Produksi",
+                    "subCaption": data.subt,
+                    "xAxisName": "Produk",
                     "yAxisName": "Perolehan",
                     "theme": "fusion",
                     "plotFillAlpha": "80",
@@ -131,15 +197,19 @@
 
                 // populating data
                 finalData = {
-                  "categories": dataCategories,
-                  "surplus": dataSurplus,
-                  "minus": dataMinus
+                    "categories": dataCategories,
+                    "surplus": dataSurplus,
+                    "minus": dataMinus
                 };
-                console.log(finalData);
 
                 // Render main chart
                 renderMainChart(finalData);
             }
+        });
+
+        // Button close
+        $('#btn-close').click(function() {
+            location.reload();
         });
     });
     </script>
