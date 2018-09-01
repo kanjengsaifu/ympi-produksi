@@ -19,13 +19,15 @@
     <div class="container h-100">
         <div class="row h-100 justify-content-center align-items-center">
             <div class="col-12">
-                <div id="chartContainer" class="text-center">Chart will load here!</div>
+                <div id="chart-container" class="text-center">Chart will load here!</div>
             </div>
         </div>
     </div>
+
+    <!-- Main Script -->
     <script type="text/javascript">
     var renderMainChart = function(data) {
-        $('#chartContainer').insertFusionCharts({
+        $('#chart-container').insertFusionCharts({
             type: 'mscolumn2d',
             width: 1024,
             height: 600,
@@ -34,7 +36,42 @@
                 "chart": {
                     "caption": "Perolehan Produksi",
                     "subCaption": "Minggu ke 35",
-                    "xAxisName": "Tanggal",
+                    "xAxisName": "Tanggal Produksi",
+                    "yAxisName": "Perolehan",
+                    "theme": "fusion",
+                    "plotFillAlpha": "80",
+                    "divLineIsDashed": "1",
+                    "divLineDashLen": "1",
+                    "divLineGapLen": "1"
+                },
+                "categories": [{
+                    "category": data.categories
+                }],
+                "dataset": [{
+                        "seriesname": "Surplus",
+                        "data": data.surplus
+                    },
+                    {
+                        "seriesname": "Minus",
+                        "data": data.minus
+                    }
+                ]
+            }
+        });
+    }
+
+    // Render extended chart
+    var renderExtChart = function(data) {
+        $('#chart-container').insertFusionCharts({
+            type: 'mscolumn2d',
+            width: 1024,
+            height: 600,
+            dataFormat: 'json',
+            dataSource: {
+                "chart": {
+                    "caption": "Perolehan Produksi",
+                    "subCaption": "Minggu ke 35",
+                    "xAxisName": "Tanggal Produksi",
                     "yAxisName": "Perolehan",
                     "theme": "fusion",
                     "plotFillAlpha": "80",
@@ -68,8 +105,8 @@
             success: function(response) {
                 var finalData = {},
                     dataCategories = [],
-                    dataDataSurplus = [],
-                    dataDataMinus = [];
+                    dataSurplus = [],
+                    dataMinus = [];
 
                 // summarize data
                 if (response.status == 'ok') {
@@ -80,23 +117,27 @@
                         }
                         dataCategories.push(dataTgl);
 
-                        var dataSurplus = {
+                        var dtPlus = {
                             "value": parseInt(data.fl_plus) + parseInt(data.cl_plus) + parseInt(data.as_plus) + parseInt(data.ts_plus)
                         }
-                        dataDataSurplus.push(dataSurplus);
+                        dataSurplus.push(dtPlus);
 
-                        var dataMinus = {
+                        var dtMinus = {
                             "value": parseInt(data.fl_minus) + parseInt(data.cl_minus) + parseInt(data.as_minus) + parseInt(data.ts_minus)
                         }
-                        dataDataMinus.push(dataMinus);
+                        dataMinus.push(dtMinus);
                     })
                 }
 
-                // Render main chart
-                finalData.categories = dataCategories;
-                finalData.surplus = dataDataSurplus;
-                finalData.minus = dataDataMinus;
+                // populating data
+                finalData = {
+                  "categories": dataCategories,
+                  "surplus": dataSurplus,
+                  "minus": dataMinus
+                };
                 console.log(finalData);
+
+                // Render main chart
                 renderMainChart(finalData);
             }
         });
