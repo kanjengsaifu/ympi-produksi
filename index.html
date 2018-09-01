@@ -1,0 +1,107 @@
+<html>
+
+<head>
+    <title>YMPI Produksi</title>
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <!-- JQuery -->
+    <script src="assets/js/jquery.min.js"></script>
+    <!-- Bootstrap 4.1 -->
+    <script src="assets/js/bootstrap.min.js"></script>
+    <!-- FusionCharts -->
+    <script src="assets/js/fusioncharts.js"></script>
+    <script src="assets/js/jquery-fusioncharts.min.js"></script>
+    <script src="assets/js/fusioncharts.theme.fusion.js"></script>
+    <!-- Moment.js -->
+    <script src="assets/js/moment.min.js"></script>
+</head>
+
+<body>
+    <div class="container h-100">
+        <div class="row h-100 justify-content-center align-items-center">
+            <div class="col-12">
+                <div id="chartContainer" class="text-center">Chart will load here!</div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+    var renderMainChart = function(data) {
+        $('#chartContainer').insertFusionCharts({
+            type: 'mscolumn2d',
+            width: 1024,
+            height: 600,
+            dataFormat: 'json',
+            dataSource: {
+                "chart": {
+                    "caption": "Perolehan Produksi",
+                    "subCaption": "Minggu ke 35",
+                    "xAxisName": "Tanggal",
+                    "yAxisName": "Perolehan",
+                    "theme": "fusion",
+                    "plotFillAlpha": "80",
+                    "divLineIsDashed": "1",
+                    "divLineDashLen": "1",
+                    "divLineGapLen": "1"
+                },
+                "categories": [{
+                    "category": data.categories
+                }],
+                "dataset": [{
+                        "seriesname": "Surplus",
+                        "data": data.surplus
+                    },
+                    {
+                        "seriesname": "Minus",
+                        "data": data.minus
+                    }
+                ]
+            }
+        });
+    }
+
+    // DOM
+    $(document).ready(function() {
+        // Call the API for MAIN CHART
+        $.ajax({
+            type: 'GET',
+            url: 'api/getData.php',
+            dataType: "json",
+            success: function(response) {
+                var finalData = {},
+                    dataCategories = [],
+                    dataDataSurplus = [],
+                    dataDataMinus = [];
+
+                // summarize data
+                if (response.status == 'ok') {
+                    var rawData = response.result;
+                    rawData.forEach(function(data) {
+                        var dataTgl = {
+                            "label": moment(data.tanggal).utc().format('DD MMM YY')
+                        }
+                        dataCategories.push(dataTgl);
+
+                        var dataSurplus = {
+                            "value": parseInt(data.fl_plus) + parseInt(data.cl_plus) + parseInt(data.as_plus) + parseInt(data.ts_plus)
+                        }
+                        dataDataSurplus.push(dataSurplus);
+
+                        var dataMinus = {
+                            "value": parseInt(data.fl_minus) + parseInt(data.cl_minus) + parseInt(data.as_minus) + parseInt(data.ts_minus)
+                        }
+                        dataDataMinus.push(dataMinus);
+                    })
+                }
+
+                // Render main chart
+                finalData.categories = dataCategories;
+                finalData.surplus = dataDataSurplus;
+                finalData.minus = dataDataMinus;
+                console.log(finalData);
+                renderMainChart(finalData);
+            }
+        });
+    });
+    </script>
+</body>
+
+</html>
