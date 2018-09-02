@@ -16,20 +16,46 @@
     <script src="assets/js/fusioncharts.theme.fusion.js"></script>
     <!-- Moment.js -->
     <script src="assets/js/moment.min.js"></script>
+    <!-- Scrollbox.js -->
+    <script src="assets/js/scrollbox.min.js"></script>
+    <!-- Our main script -->
+    <script src="assets/js/main.js"></script>
+    <style type="text/css" media="screen">
+    .marquee {
+        width: 100%;
+        overflow: hidden;
+        background: #FFC300;
+    }
+    </style>
 </head>
 
 <body>
     <div class="container h-100">
         <div class="row h-100 justify-content-center align-items-center">
             <div class="col-12">
+                <div class="text-center">
+                    <h5 id="title-chart-1">Perolehan Produksi Harian (FL, CL, AS, TS)</h5>
+                    <div class="pt-1 pb-1">
+                        <div class="marquee">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus sem ante, suscipit eget mauris eu, aliquam fringilla nisi.
+                        </div>
+                    </div>
+                </div>
                 <div id="chart-container-1" class="text-center">Chart #1 will load here!</div>
                 <div class="text-right">
-                    <button id="btn-close" class='btn btn-danger'>
-                        <i class="fas fa-arrow-alt-circle-left"></i> Kembali
-                    </button>
+                    <button id="btn-close" class='btn btn-danger d-none'><i class="fas fa-arrow-left"></i> Kembali</button>
+                    <button id="btn-ws" class="btn btn-success d-none">Weekly Shipment <i class="fas fa-arrow-right"></i></button>
                 </div>
             </div>
             <div class="col-12 d-none" id="chart-2">
+                <div class="text-center">
+                    <h5 id="title-chart-2">Perolehan Produksi Harian (PN, RC, VN)</h5>
+                    <div class="pt-1 pb-1">
+                        <div class="marquee">
+                            Nunc vestibulum vestibulum lacus, sit amet aliquet nisi semper at. Aliquam tincidunt, libero sed vulputate maximus, nisl odio facilisis nibh, sit amet dictum lorem sem vel nunc.
+                        </div>
+                    </div>
+                </div>
                 <div id="chart-container-2" class="text-center">Chart #2 will load here!</div>
             </div>
         </div>
@@ -86,336 +112,24 @@
         </div>
     </div>
     <input type="hidden" id="hidden-date" value="" />
+    <input type="hidden" id="hidden-type" value="" />
     <!-- Main Script -->
     <script type="text/javascript">
-    // Function for rendering main chart
-    var renderMainChart = function(data) {
-        // hide close btn
-        $('#btn-close').addClass('d-none');
-
-        // Un-hide chart #2 container
-        $('#chart-2').removeClass('d-none');
-
-        // Chart #1
-        $('#chart-container-1').insertFusionCharts({
-            type: 'mscolumn3d',
-            width: 1024,
-            height: 400,
-            dataFormat: 'json',
-            dataSource: {
-                "chart": {
-                    "labelDisplay": "Auto",
-                    "caption": "Perolehan Produksi 1",
-                    "subCaption": "Minggu ke 35",
-                    "xAxisName": "Tanggal Produksi",
-                    "yAxisName": "Perolehan",
-                    "theme": "fusion",
-                    "plotFillAlpha": "80",
-                    "divLineIsDashed": "1",
-                    "divLineDashLen": "1",
-                    "divLineGapLen": "1",
-                    "showValues": "1"
-                },
-                "categories": [{
-                    "category": data.categories
-                }],
-                "dataset": [{
-                        "seriesname": "Surplus",
-                        "data": data.surplus
-                    },
-                    {
-                        "seriesname": "Minus",
-                        "data": data.minus
-                    }
-                ]
-            },
-            "events": {
-                "dataPlotClick": function(eventObj, dataObj) {
-                    var finalData = {}
-                    $.ajax({
-                        type: 'POST',
-                        url: 'api/postData.php',
-                        dataType: "json",
-                        data: {
-                            id: dataObj.dataIndex + 1
-                        },
-                        success: function(res) {
-                            var response = res.result;
-
-                            // Populate datas
-                            finalData.tanggal = response.tanggal;
-                            finalData.categories = [{
-                                "label": "FL"
-                            }, {
-                                "label": "CL"
-                            }, {
-                                "label": "AS"
-                            }, {
-                                "label": "TS"
-                            }];
-
-                            finalData.surplus = [{
-                                "value": response.fl_plus
-                            }, {
-                                "value": response.cl_plus
-                            }, {
-                                "value": response.as_plus
-                            }, {
-                                "value": response.ts_plus
-                            }];
-
-                            finalData.minus = [{
-                                "value": "-" + response.fl_minus
-                            }, {
-                                "value": "-" + response.cl_minus
-                            }, {
-                                "value": "-" + response.as_minus
-                            }, {
-                                "value": "-" + response.ts_minus
-                            }];
-
-                            // Render the Extended Chart
-                            renderExtChart(finalData);
-                        }
-                    })
-                }
-            }
-        });
-
-        // Chart #2
-        $('#chart-container-2').insertFusionCharts({
-            type: 'mscolumn3d',
-            width: 1024,
-            height: 400,
-            dataFormat: 'json',
-            dataSource: {
-                "chart": {
-                    "caption": "Perolehan Produksi 2",
-                    "subCaption": "Minggu ke 35",
-                    "xAxisName": "Tanggal Produksi",
-                    "yAxisName": "Perolehan",
-                    "theme": "fusion",
-                    "plotFillAlpha": "80",
-                    "divLineIsDashed": "1",
-                    "divLineDashLen": "1",
-                    "divLineGapLen": "1",
-                    "showValues": "1"
-                },
-                "categories": [{
-                    "category": data.categories
-                }],
-                "dataset": [{
-                        "seriesname": "Surplus",
-                        "data": data.surplus_2
-                    },
-                    {
-                        "seriesname": "Minus",
-                        "data": data.minus_2
-                    }
-                ]
-            },
-            "events": {
-                "dataPlotClick": function(eventObj, dataObj) {
-                    var finalData = {}
-                    $.ajax({
-                        type: 'POST',
-                        url: 'api/postData.php',
-                        dataType: "json",
-                        data: {
-                            id: dataObj.dataIndex + 1
-                        },
-                        success: function(res) {
-                            var response = res.result;
-
-                            // Populate datas
-                            finalData.tanggal = response.tanggal;
-                            finalData.categories = [{
-                                "label": "PN"
-                            }, {
-                                "label": "RC"
-                            }, {
-                                "label": "VN"
-                            }];
-
-                            finalData.surplus = [{
-                                "value": response.pn_plus
-                            }, {
-                                "value": response.rc_plus
-                            }, {
-                                "value": response.vn_plus
-                            }];
-
-                            finalData.minus = [{
-                                "value": "-" + response.pn_minus
-                            }, {
-                                "value": "-" + response.rc_minus
-                            }, {
-                                "value": "-" + response.vn_minus
-                            }];
-
-                            // Render the Extended Chart
-                            renderExtChart(finalData);
-                        }
-                    })
-                }
-            }
-        });
-    }
-
-    // Render extended chart Fn
-    var renderExtChart = function(data) {
-        // un-hide close btn
-        $('#btn-close').removeClass('d-none');
-
-        // hide chart #2 container
-        $('#chart-2').addClass('d-none');
-
-        // save respected date on a hidden field
-        $('#hidden-date').val(moment(data.tanggal).utc().format('YYYY-MM-DD'));
-
-        // main action
-        $('#chart-container-1').insertFusionCharts({
-            type: 'mscolumn3d',
-            width: 1024,
-            height: 600,
-            dataFormat: 'json',
-            dataSource: {
-                "chart": {
-                    "caption": "Perolehan Produksi",
-                    "subCaption": "Tanggal " + moment(data.tanggal).utc().format('DD MMMM YY'),
-                    "xAxisName": "Produk",
-                    "yAxisName": "Perolehan",
-                    "theme": "fusion",
-                    "plotFillAlpha": "80",
-                    "divLineIsDashed": "1",
-                    "divLineDashLen": "1",
-                    "divLineGapLen": "1",
-                    "showValues": "1"
-                },
-                "categories": [{
-                    "category": data.categories
-                }],
-                "dataset": [{
-                        "seriesname": "Surplus",
-                        "data": data.surplus
-                    },
-                    {
-                        "seriesname": "Minus",
-                        "data": data.minus
-                    }
-                ]
-            },
-            "events": {
-                "dataPlotClick": function(eventObj, dataObj) {
-                    console.log(dataObj.categoryLabel);
-                    if (dataObj.categoryLabel == 'FL' || dataObj.categoryLabel == 'CL' || dataObj.categoryLabel == 'AS' || dataObj.categoryLabel == 'TS') {
-                        // Call table data API
-                        $.ajax({
-                            type: 'POST',
-                            url: 'api/postDetail.php',
-                            dataType: "json",
-                            data: {
-                                id: dataObj.dataIndex + 1,
-                                data_type: dataObj.categoryLabel,
-                                data_date: $('#hidden-date').val()
-                            },
-                            success: function(res) {
-                                $('#modal-title').html('Data Kesesuaian: ' + dataObj.categoryLabel);
-                                $("#table-tgl").html(moment($('#hidden-date').val()).format('DD MMMM YYYY'));
-
-                                // clear the table
-                                $("#table-data").html('');
-
-                                if (res.status == 'ok') {
-                                    var vQty = 0;
-                                    $.each(res.result, function(key, value) {
-                                        $("#table-data").append("<tr><td>" + value.gmc + "</td><td>" + value.desc + "</td><td>" + value.qty + "</td>/tr");
-                                        vQty += parseInt(value.qty);
-                                    })
-                                    // append the Qty total
-                                    $('#table-total').html(vQty);
-
-                                    // Show the MODAL
-                                    $('#modal').modal('show');
-                                } else {
-                                    $('#modal-error').modal('show');
-                                }
-                            }
-                        })
-                    }
-                }
-            }
-        });
-    }
-
-    // Call API for Main Chart Fn
-    var initiateData = function() {
-        $.ajax({
-            type: 'GET',
-            url: 'api/getData.php',
-            dataType: "json",
-            success: function(response) {
-                var finalData = {},
-                    dataCategories = [],
-                    dataSurplus = [],
-                    dataMinus = [],
-                    dataSurplus2 = [],
-                    dataMinus2 = [];
-
-                // summarize data
-                if (response.status == 'ok') {
-                    var rawData = response.result;
-                    rawData.forEach(function(data) {
-                        var dataTgl = {
-                            "label": moment(data.tanggal).utc().format('DD MMM YY')
-                        }
-                        dataCategories.push(dataTgl);
-
-                        var dtPlus = {
-                            "value": parseInt(data.fl_plus) + parseInt(data.cl_plus) + parseInt(data.as_plus) + parseInt(data.ts_plus)
-                        }
-                        dataSurplus.push(dtPlus);
-
-                        var dtMinus = {
-                            "value": parseInt(data.fl_minus) + parseInt(data.cl_minus) + parseInt(data.as_minus) + parseInt(data.ts_minus)
-                        }
-                        dataMinus.push(dtMinus);
-
-                        var dtPlus2 = {
-                            "value": parseInt(data.pn_plus) + parseInt(data.rc_plus) + parseInt(data.vn_plus)
-                        }
-                        dataSurplus2.push(dtPlus2);
-
-                        var dtMinus2 = {
-                            "value": parseInt(data.pn_minus) + parseInt(data.rc_minus) + parseInt(data.vn_minus)
-                        }
-                        dataMinus2.push(dtMinus2);
-                    })
-                }
-
-                // populating data
-                finalData = {
-                    "categories": dataCategories,
-                    "surplus": dataSurplus,
-                    "minus": dataMinus,
-                    "surplus_2": dataSurplus2,
-                    "minus_2": dataMinus2
-                };
-
-                // Render main chart
-                renderMainChart(finalData);
-            }
-        });
-    }
-
-    // DOM
     $(document).ready(function() {
         // Render main chart
         initiateData();
 
+        // Marque texts
+        renderMarquee();
+
         // Button close
         $('#btn-close').click(function() {
             initiateData();
+        });
+
+        // Button WS
+        $('#btn-ws').click(function() {
+            renderWsChart();
         });
     });
     </script>
