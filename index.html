@@ -25,7 +25,7 @@
                 <div id="chart-container-1" class="text-center">Chart #1 will load here!</div>
                 <div class="text-right">
                     <button id="btn-close" class='btn btn-danger'>
-                        <i class="fas fa-arrow-alt-circle-left"></i> Back
+                        <i class="fas fa-arrow-alt-circle-left"></i> Kembali
                     </button>
                 </div>
             </div>
@@ -39,25 +39,53 @@
                 <!-- Modal content-->
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title" id="modal-title">Modal header will be here</h4>
+                        <div class="modal-title">
+                            <h4 id="modal-title">Modal header will be here</h4>
+                            <small>Per <span id="table-tgl"></span></small>
+                        </div>
                     </div>
                     <div class="modal-body" id="modal-content">
                         <table class="table table-sm">
                             <thead>
-                                <tr id="table-head"></tr>
+                                <tr>
+                                    <th scope="col">GMC</th>
+                                    <th scope="col">Desc</th>
+                                    <th scope="col">Qty</th>
+                                </tr>
                             </thead>
-                            <tbody>
-                                <tr id="table-data"></tr>
-                            </tbody>
+                            <tbody id="table-data"></tbody>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="2">Total</th>
+                                    <th id="table-total"></th>
+                                </tr>
+                            </tfoot>
                         </table>
+                        <div class="text-right">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fas fa-times"></i> Tutup</button>
+                        </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+        <!-- Error Modal -->
+        <div id="modal-error" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="alert alert-danger text-center" role="alert" id="error-msg">
+                            Data kosong!
+                        </div>
+                        <div class="text-right">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fas fa-times"></i> Tutup</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <input type="hidden" id="hidden-date" value="" />
     <!-- Main Script -->
     <script type="text/javascript">
     // Function for rendering main chart
@@ -115,7 +143,7 @@
                             var response = res.result;
 
                             // Populate datas
-                            finalData.subt = "Tanggal " + moment(response.tanggal).utc().format('DD MMMM YY')
+                            finalData.tanggal = response.tanggal;
                             finalData.categories = [{
                                 "label": "FL"
                             }, {
@@ -200,7 +228,7 @@
                             var response = res.result;
 
                             // Populate datas
-                            finalData.subt = "Tanggal " + moment(response.tanggal).utc().format('DD MMMM YY')
+                            finalData.tanggal = response.tanggal;
                             finalData.categories = [{
                                 "label": "PN"
                             }, {
@@ -242,6 +270,9 @@
         // hide chart #2 container
         $('#chart-2').addClass('d-none');
 
+        // save respected date on a hidden field
+        $('#hidden-date').val(moment(data.tanggal).utc().format('YYYY-MM-DD'));
+
         // main action
         $('#chart-container-1').insertFusionCharts({
             type: 'mscolumn3d',
@@ -251,7 +282,7 @@
             dataSource: {
                 "chart": {
                     "caption": "Perolehan Produksi",
-                    "subCaption": data.subt,
+                    "subCaption": "Tanggal " + moment(data.tanggal).utc().format('DD MMMM YY'),
                     "xAxisName": "Produk",
                     "yAxisName": "Perolehan",
                     "theme": "fusion",
@@ -276,7 +307,6 @@
             },
             "events": {
                 "dataPlotClick": function(eventObj, dataObj) {
-                    console.log(eventObj);
                     // Call table data API
                     $.ajax({
                         type: 'POST',
@@ -284,20 +314,30 @@
                         dataType: "json",
                         data: {
                             id: dataObj.dataIndex + 1,
-                            data_type: dataObj.categoryLabel
+                            data_type: dataObj.categoryLabel,
+                            data_date: $('#hidden-date').val()
                         },
                         success: function(res) {
-                            $('#modal-title').text('Data Kesesuaian ' + dataObj.categoryLabel);
-                            // clear the table
-                            $("#table-head").html('');
-                            $("#table-data").html('');
-                            $.each(res.result, function(key, value) {
-                                $("#table-head").append("<th scope=\"col\">" + key + "</th>")
-                                $("#table-data").append("<td>" + value + "</td>");
-                            })
+                            $('#modal-title').html('Data Kesesuaian: ' + dataObj.categoryLabel);
+                            $("#table-tgl").html(moment($('#hidden-date').val()).format('DD MMMM YYYY'));
 
-                            // Show the MODAL
-                            $('#modal').modal('show');
+                            // clear the table
+                            $("#table-data").html('');
+
+                            if (res.status == 'ok') {
+                                var vQty = 0;
+                                $.each(res.result, function(key, value) {
+                                    $("#table-data").append("<tr><td>" + value.gmc + "</td><td>" + value.desc + "</td><td>" + value.qty + "</td>/tr");
+                                    vQty += parseInt(value.qty);
+                                })
+                                // append the Qty total
+                                $('#table-total').html(vQty);
+
+                                // Show the MODAL
+                                $('#modal').modal('show');
+                            } else {
+                                $('#modal-error').modal('show');
+                            }
                         }
                     })
                 }
@@ -369,7 +409,7 @@
     $(document).ready(function() {
         // Render main chart
         initiateData();
-        
+
         // Button close
         $('#btn-close').click(function() {
             initiateData();

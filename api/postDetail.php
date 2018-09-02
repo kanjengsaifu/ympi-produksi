@@ -1,39 +1,48 @@
 <?php
 include "conn.php";
-if (!empty($_POST['id'])) {
+include 'inc/ChromePhp.php';
+
+if (!empty($_POST['data_date'])) {
     switch ($_POST['data_type']) {
         case 'FL':
-            $q = "SELECT * FROM kesesuaian_item WHERE produk = 'fl'";
+            $q = "SELECT * FROM kesesuaian_item WHERE produk = 'fl' AND tanggal = '{$_POST['data_date']}'";
             break;
         case 'CL':
-            $q = "SELECT * FROM kesesuaian_item WHERE produk = 'cl'";
+            $q = "SELECT * FROM kesesuaian_item WHERE produk = 'cl' AND tanggal = '{$_POST['data_date']}'";
             break;
         case 'AS':
-            $q = "SELECT * FROM kesesuaian_item WHERE produk = 'as'";
+            $q = "SELECT * FROM kesesuaian_item WHERE produk = 'as' AND tanggal = '{$_POST['data_date']}'";
             break;
         case 'TS':
-            $q = "SELECT * FROM kesesuaian_item WHERE produk = 'ts'";
+            $q = "SELECT * FROM kesesuaian_item WHERE produk = 'ts' AND tanggal = '{$_POST['data_date']}'";
             break;
         case 'PN':
-            $q = "SELECT * FROM kesesuaian_item WHERE produk = 'pn'";
+            $q = "SELECT * FROM kesesuaian_item WHERE produk = 'pn' AND tanggal = '{$_POST['data_date']}'";
             break;
         case 'RC':
-            $q = "SELECT * FROM kesesuaian_item WHERE produk = 'rc'";
+            $q = "SELECT * FROM kesesuaian_item WHERE produk = 'rc' AND tanggal = '{$_POST['data_date']}'";
             break;
         default:
-            $q = "SELECT * FROM kesesuaian_item WHERE produk = 'vn'";
+            $q = "SELECT * FROM kesesuaian_item WHERE produk = 'vn' AND tanggal = '{$_POST['data_date']}'";
             break;
     }
 
+    // ChromePhp::log($q);
+
     $query = $db->query($q);
+    $rows = array();
 
     if ($query->num_rows > 0) {
-        $res = $query->fetch_assoc();
+        while ($r = mysqli_fetch_assoc($query)) {
+            $rows[] = $r;
+        }
+
         $data['status'] = 'ok';
-        $data['result'] = $res;
+        $data['result'] = $rows;
+        $data['tanggal'] = $_POST['data_date'];
     } else {
         $data['status'] = 'err';
-        $data['result'] = 'Couldn\'t find data';
+        $data['result'] = 'Data is empty!';
     }
 
     //returns data as JSON format
