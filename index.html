@@ -307,39 +307,42 @@
             },
             "events": {
                 "dataPlotClick": function(eventObj, dataObj) {
-                    // Call table data API
-                    $.ajax({
-                        type: 'POST',
-                        url: 'api/postDetail.php',
-                        dataType: "json",
-                        data: {
-                            id: dataObj.dataIndex + 1,
-                            data_type: dataObj.categoryLabel,
-                            data_date: $('#hidden-date').val()
-                        },
-                        success: function(res) {
-                            $('#modal-title').html('Data Kesesuaian: ' + dataObj.categoryLabel);
-                            $("#table-tgl").html(moment($('#hidden-date').val()).format('DD MMMM YYYY'));
+                    console.log(dataObj.categoryLabel);
+                    if (dataObj.categoryLabel == 'FL' || dataObj.categoryLabel == 'CL' || dataObj.categoryLabel == 'AS' || dataObj.categoryLabel == 'TS') {
+                        // Call table data API
+                        $.ajax({
+                            type: 'POST',
+                            url: 'api/postDetail.php',
+                            dataType: "json",
+                            data: {
+                                id: dataObj.dataIndex + 1,
+                                data_type: dataObj.categoryLabel,
+                                data_date: $('#hidden-date').val()
+                            },
+                            success: function(res) {
+                                $('#modal-title').html('Data Kesesuaian: ' + dataObj.categoryLabel);
+                                $("#table-tgl").html(moment($('#hidden-date').val()).format('DD MMMM YYYY'));
 
-                            // clear the table
-                            $("#table-data").html('');
+                                // clear the table
+                                $("#table-data").html('');
 
-                            if (res.status == 'ok') {
-                                var vQty = 0;
-                                $.each(res.result, function(key, value) {
-                                    $("#table-data").append("<tr><td>" + value.gmc + "</td><td>" + value.desc + "</td><td>" + value.qty + "</td>/tr");
-                                    vQty += parseInt(value.qty);
-                                })
-                                // append the Qty total
-                                $('#table-total').html(vQty);
+                                if (res.status == 'ok') {
+                                    var vQty = 0;
+                                    $.each(res.result, function(key, value) {
+                                        $("#table-data").append("<tr><td>" + value.gmc + "</td><td>" + value.desc + "</td><td>" + value.qty + "</td>/tr");
+                                        vQty += parseInt(value.qty);
+                                    })
+                                    // append the Qty total
+                                    $('#table-total').html(vQty);
 
-                                // Show the MODAL
-                                $('#modal').modal('show');
-                            } else {
-                                $('#modal-error').modal('show');
+                                    // Show the MODAL
+                                    $('#modal').modal('show');
+                                } else {
+                                    $('#modal-error').modal('show');
+                                }
                             }
-                        }
-                    })
+                        })
+                    }
                 }
             }
         });
