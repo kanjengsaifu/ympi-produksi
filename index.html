@@ -44,10 +44,10 @@
                     <div class="modal-body" id="modal-content">
                         <table class="table table-sm">
                             <thead>
-                              <tr id="table-head"></tr>
+                                <tr id="table-head"></tr>
                             </thead>
                             <tbody>
-                              <tr id="table-data"></tr>
+                                <tr id="table-data"></tr>
                             </tbody>
                         </table>
                     </div>
@@ -85,7 +85,8 @@
                     "plotFillAlpha": "80",
                     "divLineIsDashed": "1",
                     "divLineDashLen": "1",
-                    "divLineGapLen": "1"
+                    "divLineGapLen": "1",
+                    "showValues": "1"
                 },
                 "categories": [{
                     "category": data.categories
@@ -169,7 +170,8 @@
                     "plotFillAlpha": "80",
                     "divLineIsDashed": "1",
                     "divLineDashLen": "1",
-                    "divLineGapLen": "1"
+                    "divLineGapLen": "1",
+                    "showValues": "1"
                 },
                 "categories": [{
                     "category": data.categories
@@ -232,7 +234,7 @@
         });
     }
 
-    // Render extended chart
+    // Render extended chart Fn
     var renderExtChart = function(data) {
         // un-hide close btn
         $('#btn-close').removeClass('d-none');
@@ -256,7 +258,8 @@
                     "plotFillAlpha": "80",
                     "divLineIsDashed": "1",
                     "divLineDashLen": "1",
-                    "divLineGapLen": "1"
+                    "divLineGapLen": "1",
+                    "showValues": "1"
                 },
                 "categories": [{
                     "category": data.categories
@@ -273,6 +276,7 @@
             },
             "events": {
                 "dataPlotClick": function(eventObj, dataObj) {
+                    console.log(eventObj);
                     // Call table data API
                     $.ajax({
                         type: 'POST',
@@ -288,7 +292,7 @@
                             $("#table-head").html('');
                             $("#table-data").html('');
                             $.each(res.result, function(key, value) {
-                                $("#table-head").append("<th scope=\"col\">"+key+"</th>")
+                                $("#table-head").append("<th scope=\"col\">" + key + "</th>")
                                 $("#table-data").append("<td>" + value + "</td>");
                             })
 
@@ -301,9 +305,8 @@
         });
     }
 
-    // DOM
-    $(document).ready(function() {
-        // Call the API for MAIN CHART
+    // Call API for Main Chart Fn
+    var initiateData = function() {
         $.ajax({
             type: 'GET',
             url: 'api/getData.php',
@@ -360,10 +363,16 @@
                 renderMainChart(finalData);
             }
         });
+    }
 
+    // DOM
+    $(document).ready(function() {
+        // Render main chart
+        initiateData();
+        
         // Button close
         $('#btn-close').click(function() {
-            location.reload();
+            initiateData();
         });
     });
     </script>
