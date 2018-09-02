@@ -284,6 +284,9 @@
                         },
                         success: function(res) {
                             $('#modal-title').text('Data Kesesuaian ' + dataObj.categoryLabel);
+                            // clear the table
+                            $("#table-head").html('');
+                            $("#table-data").html('');
                             $.each(res.result, function(key, value) {
                                 $("#table-head").append("<th scope=\"col\">"+key+"</th>")
                                 $("#table-data").append("<td>" + value + "</td>");
