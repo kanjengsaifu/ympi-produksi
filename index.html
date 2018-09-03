@@ -478,27 +478,34 @@
                     if (data.data_type == "FL") {
                         finalData = [{
                             "label": "FL",
-                            "value": data.persentase_fl + "%"
+                            "value": data.persentase_fl,
+                            "color": "#F44336"
                         }, {
                             "label": "CL",
-                            "value": data.persentase_cl + "%"
+                            "value": data.persentase_cl,
+                            "color": "#2196F3"
                         }, {
                             "label": "AS",
-                            "value": data.persentase_as + "%"
+                            "value": data.persentase_as,
+                            "color": "#FFC107"
                         }, {
                             "label": "TS",
-                            "value": data.persentase_ts + "%"
+                            "value": data.persentase_ts,
+                            "color": "#009688"
                         }];
                     } else {
                         finalData = [{
                             "label": "PN",
-                            "value": data.persentase_pn + "%"
+                            "value": data.persentase_pn,
+                            "color": "#F44336"
                         }, {
                             "label": "RC",
-                            "value": data.persentase_rc + "%"
+                            "value": data.persentase_rc,
+                            "color": "#2196F3"
                         }, {
                             "label": "VN",
-                            "value": data.persentase_vn + "%"
+                            "value": data.persentase_vn,
+                            "color": "#FFC107"
                         }];
                     }
                     
@@ -511,7 +518,7 @@
                         dataSource: {
                             "chart": {
                                 "caption": "Persentase Produksi Mingguan",
-                                "subCaption": "Per " + moment(data.tanggal).format('DD MMMM YY'),
+                                "subCaption": "Per " + moment(data.tanggal).format('DD MMMM YYYY'),
                                 "xAxisName": "Produk",
                                 "yAxisName": "Persentase",
                                 "theme": "fusion",
@@ -519,7 +526,8 @@
                                 "divLineIsDashed": "1",
                                 "divLineDashLen": "1",
                                 "divLineGapLen": "1",
-                                "showValues": "1"
+                                "showValues": "1",
+                                "numberSuffix": "%",
                             },
                             "data": finalData
                         }
