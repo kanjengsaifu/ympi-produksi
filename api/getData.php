@@ -1,5 +1,6 @@
 <?php
 include "conn.php";
+
 $query = $db->query("SELECT * FROM perolehan");
 $rows = array();
 

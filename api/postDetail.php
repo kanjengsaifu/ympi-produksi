@@ -1,6 +1,5 @@
 <?php
 include "conn.php";
-include 'inc/ChromePhp.php';
 
 if (!empty($_POST['data_date'])) {
     switch ($_POST['data_type']) {
@@ -26,8 +25,6 @@ if (!empty($_POST['data_date'])) {
             $q = "SELECT * FROM kesesuaian_item WHERE produk = 'vn' AND tanggal = '{$_POST['data_date']}'";
             break;
     }
-
-    // ChromePhp::log($q);
 
     $query = $db->query($q);
     $rows = array();

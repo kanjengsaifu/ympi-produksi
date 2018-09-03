@@ -1,5 +1,6 @@
 <?php
 include "conn.php";
+
 if (!empty($_POST['id'])) {
     $query = $db->query("SELECT * FROM perolehan WHERE id = {$_POST['id']}");
 
