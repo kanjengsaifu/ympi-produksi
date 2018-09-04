@@ -2,14 +2,16 @@
 include "conn.php";
 include "inc/chromePhp.php";
 
-if (!empty($_POST['type'])) {
-    $dt = $_POST['type'];
+if (!empty($_POST['data_type'])) {
+    $dt = $_POST['data_type'];
     $rows = array();
 
-    if ($dt === "FL") {
-        $query = $db->query("SELECT tanggal, persentase_fl, persentase_cl, persentase_as, persentase_ts FROM perolehan WHERE tanggal = '2018-08-30'");
+    // ChromePhp::log($_POST['data_type']);
+
+    if ($dt == "FL" || $dt == "CL" || $dt == "AS" || $dt == "TS") {
+        $query = $db->query("SELECT * FROM shipment WHERE week = {$_POST['data_week']} AND produk = 'fl' OR produk = 'cl' OR produk = 'as' OR produk = 'ts'");
     } else {
-        $query = $db->query("SELECT tanggal, persentase_pn, persentase_rc, persentase_vn FROM perolehan WHERE tanggal = '2018-08-30'");
+        $query = $db->query("SELECT * FROM shipment WHERE week = {$_POST['data_week']} AND produk = 'pn' OR produk = 'rc' OR produk = 'vn'");
     }
 
     if ($query->num_rows > 0) {

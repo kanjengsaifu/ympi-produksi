@@ -58,7 +58,7 @@
         <div class="row h-100 justify-content-center align-items-center">
             <div class="col-12">
                 <div class="text-center">
-                    <h5 id="title-chart-1">Perolehan Produksi Harian (FL, CL, AS, TS)</h5>
+                    <h5 id="title-chart-1">Perolehan Produksi (FL, CL, AS, TS)</h5>
                     <div class="pt-1 pb-1 marquee">
                         <!-- <marquee> -->
                         <span style="font-family: Impact; font-size: 18pt">Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor!</span>
@@ -73,7 +73,7 @@
             </div>
             <div class="col-12 d-none" id="chart-2">
                 <div class="text-center">
-                    <h5 id="title-chart-2">Perolehan Produksi Harian (PN, RC, VN)</h5>
+                    <h5 id="title-chart-2">Perolehan Produksi (PN, RC, VN)</h5>
                     <div class="pt-1 pb-1 marquee">
                         <!-- <marquee> -->
                         <span style="font-family: Impact; font-size: 18pt">Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor!</span>
@@ -91,7 +91,7 @@
                     <div class="modal-header">
                         <div class="modal-title">
                             <h4 id="modal-title">Modal header will be here</h4>
-                            <small>Per <span id="table-tgl"></span></small>
+                            <small>Tgl: <span id="table-tgl"></span></small>
                         </div>
                     </div>
                     <div class="modal-body" id="modal-content">
@@ -115,7 +115,7 @@
                                 </tr>
                             </tfoot>
                         </table>
-                        <div class="text-right">
+                        <div class="text-right pt-3">
                             <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fas fa-times"></i> Tutup</button>
                         </div>
                     </div>
@@ -291,11 +291,11 @@
                 }],
                 "dataset": [{
                         "seriesname": "Surplus",
-                        "data": data.surplus_2
+                        "data": data.plan_2
                     },
                     {
                         "seriesname": "Minus",
-                        "data": data.minus_2
+                        "data": data.actual_2
                     }
                 ]
             },
@@ -304,16 +304,44 @@
                     var finalData = {}
                     $.ajax({
                         type: 'POST',
-                        url: 'api/postData.php',
+                        url: 'api/postData2.php',
                         dataType: "json",
                         data: {
-                            id: dataObj.dataIndex + 1
+                            tanggal: moment(dataObj.categoryLabel).format('YYYY-MM-DD')
                         },
                         success: function(res) {
-                            var response = res.result;
+                            var rawObj = res.result;
+
+                            // Find each product's diff
+                            var pnDiffPlus = 0,
+                                pnDiffMin = 0,
+                                rcDiffPlus = 0,
+                                rcDiffMin = 0,
+                                vnDiffPlus = 0,
+                                vnDiffMin = 0;
+
+                            rawObj.forEach(function(dt) {
+                                if (dt.tipe_produk == 'pn') {
+                                    var pnCalc = dt.actual - dt.plan;
+                                    if (pnCalc > 0) pnDiffPlus += pnCalc;
+                                    else pnDiffMin += pnCalc;
+                                }
+
+                                if (dt.tipe_produk == 'rc') {
+                                    var rcCalc = dt.actual - dt.plan;
+                                    if (rcCalc > 0) rcDiffPlus += rcCalc;
+                                    else rcDiffMin += rcCalc;
+                                }
+
+                                if (dt.tipe_produk == 'vn') {
+                                    var vnCalc = dt.actual - dt.plan;
+                                    if (vnCalc > 0) vnDiffPlus += vnCalc;
+                                    else vnDiffMin += vnCalc;
+                                }
+                            })
 
                             // Populate datas
-                            finalData.tanggal = response.tanggal;
+                            finalData.tanggal = dataObj.categoryLabel;
                             finalData.categories = [{
                                 "label": "PN"
                             }, {
@@ -323,19 +351,19 @@
                             }];
 
                             finalData.surplus = [{
-                                "value": response.pn_plus
+                                "value": pnDiffPlus
                             }, {
-                                "value": response.rc_plus
+                                "value": rcDiffPlus
                             }, {
-                                "value": response.vn_plus
+                                "value": vnDiffPlus
                             }];
 
                             finalData.minus = [{
-                                "value": response.pn_minus
+                                "value": pnDiffMin
                             }, {
-                                "value": response.rc_minus
+                                "value": rcDiffMin
                             }, {
-                                "value": response.vn_minus
+                                "value": vnDiffMin
                             }];
 
                             // Render the Extended Chart
@@ -370,8 +398,8 @@
             dataFormat: 'json',
             dataSource: {
                 "chart": {
-                    "caption": "Perolehan Produksi",
-                    "subCaption": "Tanggal " + moment(data.tanggal).format('DD MMMM YY'),
+                    "caption": "Kesesuaian Produksi",
+                    "subCaption": "Tanggal " + moment(data.tanggal).format('DD MMMM YYYY'),
                     // "xAxisName": "Produk",
                     "yAxisName": "Perolehan",
                     "theme": "fusion",
@@ -414,9 +442,10 @@
                                 $("#table-data").html('');
 
                                 if (res.status == 'ok') {
-                                    var totPlan = 0, totAct = 0;
+                                    var totPlan = 0,
+                                        totAct = 0;
                                     $.each(res.result, function(key, value) {
-                                    		var diff = value.actual - value.plan;
+                                        var diff = value.actual - value.plan;
                                         $("#table-data").append("<tr><td>" + value.gmc + "</td><td>" + value.description + "</td><td>" + value.plan + "</td><td>" + value.actual + "</td><td><strong>" + diff + "</strong></td></tr>");
                                         totPlan += parseInt(value.plan);
                                         totAct += parseInt(value.actual);
@@ -452,8 +481,8 @@
                     dataCategories = [],
                     dataPlan = [],
                     dataActual = [],
-                    dataSurplus2 = [],
-                    dataMinus2 = [];
+                    dataPlan2 = [],
+                    dataActual2 = [];
 
                 // summarize data
                 if (response.status == 'ok') {
@@ -480,15 +509,15 @@
                         }
                         dataActual.push(dtAct);
 
-                        // dtPlus2 = {
-                        //     "value": parseInt(data.pn_plus) + parseInt(data.rc_plus) + parseInt(data.vn_plus)
-                        // }
-                        // dataSurplus2.push(dtPlus2);
+                        dtPlan2 = {
+                            "value": data.pnPlan + data.rcPlan + data.vnPlan
+                        }
+                        dataPlan2.push(dtPlan2);
 
-                        // dtMinus2 = {
-                        //     "value": parseInt(data.pn_minus) + parseInt(data.rc_minus) + parseInt(data.vn_minus)
-                        // }
-                        // dataMinus2.push(dtMinus2);
+                        dtAct2 = {
+                            "value": data.pnAct + data.pnAct + data.vnAct
+                        }
+                        dataActual2.push(dtAct2);
                     })
                 }
 
@@ -497,8 +526,8 @@
                     "categories": dataCategories,
                     "plan": dataPlan,
                     "actual": dataActual,
-                    // "surplus_2": dataSurplus2,
-                    // "minus_2": dataMinus2
+                    "plan_2": dataPlan2,
+                    "actual_2": dataActual2
                 };
 
                 // Render main chart
@@ -507,6 +536,7 @@
         });
     }
 
+    // Sort Data Fn (for main chart)
     var sortData = function(rawObj) {
         var group_to_values = rawObj.reduce(function(obj, item) {
             obj[item.tanggal] = obj[item.tanggal] || [];
@@ -540,7 +570,13 @@
                 dtAsPlan = 0,
                 dtAsAct = 0,
                 dtTsPlan = 0,
-                dtTsAct = 0;
+                dtTsAct = 0,
+                dtPnPlan = 0,
+                dtPnAct = 0,
+                dtVnPlan = 0,
+                dtVnAct = 0,
+                dtRcPlan = 0,
+                dtRcAct = 0;
             dtObj.forEach(function(dt) {
                 if (dt.tipe_produk == 'fl') {
                     dtFlPlan += parseInt(dt.plan);
@@ -551,9 +587,18 @@
                 } else if (dt.tipe_produk == 'as') {
                     dtAsPlan += parseInt(dt.plan);
                     dtAsAct += parseInt(dt.actual);
-                } else {
+                } else if (dt.tipe_produk == 'ts') {
                     dtTsPlan += parseInt(dt.plan);
                     dtTsAct += parseInt(dt.actual);
+                } else if (dt.tipe_produk == 'pn') {
+                    dtPnPlan += parseInt(dt.plan);
+                    dtPnAct += parseInt(dt.actual);
+                } else if (dt.tipe_produk == 'rc') {
+                    dtRcPlan += parseInt(dt.plan);
+                    dtRcAct += parseInt(dt.actual);
+                } else {
+                    dtVnPlan += parseInt(dt.plan);
+                    dtVnAct += parseInt(dt.actual);
                 }
             });
             tempObj = {
@@ -565,12 +610,40 @@
                 asPlan: dtAsPlan,
                 asAct: dtAsAct,
                 tsPlan: dtTsPlan,
-                tsAct: dtTsAct
+                tsAct: dtTsAct,
+                pnPlan: dtPnPlan,
+                pnAct: dtPnAct,
+                rcPlan: dtRcPlan,
+                rcAct: dtRcAct,
+                vnPlan: dtVnPlan,
+                vnAct: dtVnAct
             };
             rawData.push(tempObj);
         });
 
         return rawData;
+    }
+
+    // Sort Data Fn (for WS chart)
+    var sortWsData = function(rawObj) {
+        var group_to_values = rawObj.reduce(function(obj, item) {
+            obj[item.tanggal] = obj[item.tanggal] || [];
+            obj[item.tanggal].push({
+                produk: item.produk,
+                target_persentase: item.target_persentase,
+                persentase_shipment: item.persentase_shipment
+            });
+            return obj;
+        }, {});
+
+        var groups = Object.keys(group_to_values).map(function(key) {
+            return {
+                tanggal: key,
+                data: group_to_values[key]
+            };
+        });
+
+        return groups;
     }
 
     // DOM event
@@ -585,55 +658,47 @@
 
         // Button WS
         $('#btn-ws').click(function() {
-            var dataType = $('#hidden-type').val();
+            var dType = $('#hidden-type').val();
+            var dDate = $('#hidden-date').val();
+            var dWeek = moment(dDate).week();
+
             $.ajax({
                 type: 'POST',
                 url: 'api/postWs.php',
                 dataType: "json",
                 data: {
-                    type: dataType
+                    data_type: dType,
+                    data_week: dWeek
                 },
                 success: function(response) {
                     // hide WS button
                     $('#btn-ws').addClass('d-none');
 
                     // Populate dataset
-                    var data = response.result[0];
+                    var rawData = response.result;
+                    var sortedData = sortWsData(rawData);
 
-                    var finalData = [];
-                    if (data.data_type == "FL") {
-                        finalData = [{
-                            "label": "FL",
-                            "value": data.persentase_fl,
-                            "color": "#F44336"
-                        }, {
-                            "label": "CL",
-                            "value": data.persentase_cl,
-                            "color": "#2196F3"
-                        }, {
-                            "label": "AS",
-                            "value": data.persentase_as,
-                            "color": "#FFC107"
-                        }, {
-                            "label": "TS",
-                            "value": data.persentase_ts,
-                            "color": "#009688"
-                        }];
-                    } else {
-                        finalData = [{
-                            "label": "PN",
-                            "value": data.persentase_pn,
-                            "color": "#F44336"
-                        }, {
-                            "label": "RC",
-                            "value": data.persentase_rc,
-                            "color": "#2196F3"
-                        }, {
-                            "label": "VN",
-                            "value": data.persentase_vn,
-                            "color": "#FFC107"
-                        }];
-                    }
+                    var dataCat = [],
+                        dataSet = [];
+                    sortedData.forEach(function(val) {
+                        // compile category array
+                        dataCat.push({
+                            "label": val.tanggal
+                        });
+
+                        // compile dataset array
+                        var dataProd = val.data;
+                        var tempSet = [];
+                        dataProd.forEach(function(item) {
+                            console.log(item)
+                            // dataSet.push({
+                            //     "seriesname": item.produk,
+                            //     "data": item.persentase_shipment
+                            // });
+                        });
+                    });
+
+                    // console.log(dataCat, dataSet);
 
                     // Render WS chart
                     $('#chart-container-1').insertFusionCharts({
@@ -644,7 +709,7 @@
                         dataSource: {
                             "chart": {
                                 "caption": "Persentase Produksi Mingguan",
-                                "subCaption": "Per " + moment(data.tanggal).format('DD MMMM YYYY'),
+                                "subCaption": "Week " + dWeek,
                                 "xAxisName": "Produk",
                                 "yAxisName": "Persentase",
                                 "theme": "fusion",
@@ -655,7 +720,8 @@
                                 "showValues": "1",
                                 "numberSuffix": "%",
                             },
-                            "data": finalData
+                            "categories": dataCat,
+                            "dataset": dataSet
                         }
                     });
                 }
