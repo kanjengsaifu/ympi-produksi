@@ -39,7 +39,10 @@
         overflow: hidden;
         white-space: nowrap;
         animation: marquee 20s linear infinite;
-        -webkit-animation: marquee 20s linear infinite;width: 100%;
+        marquee-speed: fast;
+        -webkit-animation: marquee 20s linear infinite;
+        -webkit-marquee-speed: fast;
+        width: 100%;
         background: #FFC300;
     }
 
@@ -58,7 +61,7 @@
                     <h5 id="title-chart-1">Perolehan Produksi Harian (FL, CL, AS, TS)</h5>
                     <div class="pt-1 pb-1 marquee">
                         <!-- <marquee> -->
-                            <span style="font-family: Impact; font-size: 18pt">Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor!</span>
+                        <span style="font-family: Impact; font-size: 18pt">Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor!</span>
                         <!-- </marquee> -->
                     </div>
                 </div>
@@ -73,7 +76,7 @@
                     <h5 id="title-chart-2">Perolehan Produksi Harian (PN, RC, VN)</h5>
                     <div class="pt-1 pb-1 marquee">
                         <!-- <marquee> -->
-                            <span style="font-family: Impact; font-size: 18pt">Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor!</span>
+                        <span style="font-family: Impact; font-size: 18pt">Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor!</span>
                         <!-- </marquee> -->
                     </div>
                 </div>
@@ -165,12 +168,12 @@
                     "category": data.categories
                 }],
                 "dataset": [{
-                        "seriesname": "Surplus",
-                        "data": data.surplus
+                        "seriesname": "Plan",
+                        "data": data.plan
                     },
                     {
-                        "seriesname": "Minus",
-                        "data": data.minus
+                        "seriesname": "Actual",
+                        "data": data.actual
                     }
                 ]
             },
@@ -405,49 +408,115 @@
             success: function(response) {
                 var finalData = {},
                     dataCategories = [],
-                    dataSurplus = [],
-                    dataMinus = [],
+                    dataPlan = [],
+                    dataActual = [],
                     dataSurplus2 = [],
                     dataMinus2 = [];
 
                 // summarize data
                 if (response.status == 'ok') {
-                    var rawData = response.result;
+                    // Grouping data by "Tanggal"
+                    var rawObj = response.result;
+                    var group_to_values = rawObj.reduce(function(obj, item) {
+                        obj[item.tanggal] = obj[item.tanggal] || [];
+                        obj[item.tanggal].push({
+                            tipe_produk: item.tipe_produk,
+                            gmc: item.gmc,
+                            description: item.description,
+                            plan: item.plan,
+                            actual: item.actual,
+                            diff_minus: item.diff_minus,
+                            diff_plus: item.diff_plus
+                        });
+                        return obj;
+                    }, {});
+
+                    var groups = Object.keys(group_to_values).map(function(key) {
+                        return {
+                            tanggal: key,
+                            data: group_to_values[key]
+                        };
+                    });
+
+                    // Then do grouping the result by "Tipe_produk"
+                    var rawData = [];
+                    groups.forEach(function(val) {
+                        var tempObj = {};
+                        // Iterate the "data" object
+                        var dtObj = val.data,
+                            dtFlPlan = 0,
+                            dtFlAct = 0,
+                            dtClPlan = 0,
+                            dtClAct = 0,
+                            dtAsPlan = 0,
+                            dtAsAct = 0,
+                            dtTsPlan = 0,
+                            dtTsAct = 0;
+                        dtObj.forEach(function(dt) {
+                            if (dt.tipe_produk == 'fl') {
+                                dtFlPlan += parseInt(dt.plan);
+                                dtFlAct += parseInt(dt.actual);
+                            } else if (dt.tipe_produk == 'cl') {
+                                dtClPlan += parseInt(dt.plan);
+                                dtClAct += parseInt(dt.actual);
+                            } else if (dt.tipe_produk == 'as') {
+                                dtAsPlan += parseInt(dt.plan);
+                                dtAsAct += parseInt(dt.actual);
+                            } else {
+                                dtTsPlan += parseInt(dt.plan);
+                                dtTsAct += parseInt(dt.actual);
+                            }
+                        });
+                        tempObj = {
+                            category: val.tanggal,
+                            flPlan: dtFlPlan,
+                            flAct: dtFlAct,
+                            clPlan: dtClPlan,
+                            clAct: dtClAct,
+                            asPlan: dtAsPlan,
+                            asAct: dtAsAct,
+                            tsPlan: dtTsPlan,
+                            tsAct: dtTsAct
+                        };
+                        rawData.push(tempObj);
+                    })
+
+                    // Populating for chart
                     rawData.forEach(function(data) {
                         var dataTgl = {
-                            "label": moment(data.tanggal).utc().format('DD MMM YY')
+                            "label": moment(data.category).format('DD MMM YY')
                         }
                         dataCategories.push(dataTgl);
 
-                        var dtPlus = {
-                            "value": parseInt(data.fl_plus) + parseInt(data.cl_plus) + parseInt(data.as_plus) + parseInt(data.ts_plus)
+                        var dtPlan = {
+                            "value": data.flPlan + data.clPlan + data.asPlan + data.tsPlan
                         }
-                        dataSurplus.push(dtPlus);
+                        dataPlan.push(dtPlan);
 
-                        var dtMinus = {
-                            "value": "-" + (parseInt(data.fl_minus) + parseInt(data.cl_minus) + parseInt(data.as_minus) + parseInt(data.ts_minus))
+                        var dtAct = {
+                            "value": data.flAct + data.clAct + data.asAct + data.tsAct
                         }
-                        dataMinus.push(dtMinus);
+                        dataActual.push(dtAct);
 
-                        var dtPlus2 = {
-                            "value": parseInt(data.pn_plus) + parseInt(data.rc_plus) + parseInt(data.vn_plus)
-                        }
-                        dataSurplus2.push(dtPlus2);
+                        // dtPlus2 = {
+                        //     "value": parseInt(data.pn_plus) + parseInt(data.rc_plus) + parseInt(data.vn_plus)
+                        // }
+                        // dataSurplus2.push(dtPlus2);
 
-                        var dtMinus2 = {
-                            "value": parseInt(data.pn_minus) + parseInt(data.rc_minus) + parseInt(data.vn_minus)
-                        }
-                        dataMinus2.push(dtMinus2);
+                        // dtMinus2 = {
+                        //     "value": parseInt(data.pn_minus) + parseInt(data.rc_minus) + parseInt(data.vn_minus)
+                        // }
+                        // dataMinus2.push(dtMinus2);
                     })
                 }
 
                 // populating data
                 finalData = {
                     "categories": dataCategories,
-                    "surplus": dataSurplus,
-                    "minus": dataMinus,
-                    "surplus_2": dataSurplus2,
-                    "minus_2": dataMinus2
+                    "plan": dataPlan,
+                    "actual": dataActual,
+                    // "surplus_2": dataSurplus2,
+                    // "minus_2": dataMinus2
                 };
 
                 // Render main chart
