@@ -100,14 +100,18 @@
                                 <tr>
                                     <th scope="col">GMC</th>
                                     <th scope="col">Desc</th>
-                                    <th scope="col">Qty</th>
+                                    <th scope="col">Plan</th>
+                                    <th scope="col">Actual</th>
+                                    <th scope="col">Diff</th>
                                 </tr>
                             </thead>
                             <tbody id="table-data"></tbody>
                             <tfoot>
                                 <tr>
                                     <th colspan="2">Total</th>
-                                    <th id="table-total"></th>
+                                    <th id="table-total-plan"></th>
+                                    <th id="table-total-actual"></th>
+                                    <th></th>
                                 </tr>
                             </tfoot>
                         </table>
@@ -127,7 +131,7 @@
                         <div class="alert alert-danger text-center" role="alert" id="error-msg">
                             Data kosong!
                         </div>
-                        <div class="text-right">
+                        <div class="text-right pt-3">
                             <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fas fa-times"></i> Tutup</button>
                         </div>
                     </div>
@@ -201,7 +205,6 @@
                                 tsDiffMin = 0;
 
                             rawObj.forEach(function(dt) {
-                            		console.log(dt);
                                 if (dt.tipe_produk == 'fl') {
                                     var flCalc = dt.actual - dt.plan;
                                     if (flCalc > 0) flDiffPlus += flCalc;
@@ -400,7 +403,6 @@
                             url: 'api/postDetail.php',
                             dataType: "json",
                             data: {
-                                id: dataObj.dataIndex + 1,
                                 data_type: dataObj.categoryLabel,
                                 data_date: $('#hidden-date').val()
                             },
@@ -412,13 +414,16 @@
                                 $("#table-data").html('');
 
                                 if (res.status == 'ok') {
-                                    var vQty = 0;
+                                    var totPlan = 0, totAct = 0;
                                     $.each(res.result, function(key, value) {
-                                        $("#table-data").append("<tr><td>" + value.gmc + "</td><td>" + value.desc + "</td><td>" + value.qty + "</td>/tr");
-                                        vQty += parseInt(value.qty);
+                                    		var diff = value.actual - value.plan;
+                                        $("#table-data").append("<tr><td>" + value.gmc + "</td><td>" + value.description + "</td><td>" + value.plan + "</td><td>" + value.actual + "</td><td><strong>" + diff + "</strong></td></tr>");
+                                        totPlan += parseInt(value.plan);
+                                        totAct += parseInt(value.actual);
                                     })
                                     // append the Qty total
-                                    $('#table-total').html(vQty);
+                                    $('#table-total-plan').html(totPlan);
+                                    $('#table-total-actual').html(totAct);
 
                                     // Show the MODAL
                                     $('#modal').modal('show');

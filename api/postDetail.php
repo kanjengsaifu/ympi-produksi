@@ -1,28 +1,29 @@
 <?php
 include "conn.php";
+include "inc/chromePhp.php";
 
 if (!empty($_POST['data_date'])) {
     switch ($_POST['data_type']) {
         case 'FL':
-            $q = "SELECT * FROM kesesuaian_item WHERE produk = 'fl' AND tanggal = '{$_POST['data_date']}'";
+            $q = "SELECT * FROM perolehan WHERE tipe_produk = 'fl' AND tanggal = '{$_POST['data_date']}'";
             break;
         case 'CL':
-            $q = "SELECT * FROM kesesuaian_item WHERE produk = 'cl' AND tanggal = '{$_POST['data_date']}'";
+            $q = "SELECT * FROM perolehan WHERE tipe_produk = 'cl' AND tanggal = '{$_POST['data_date']}'";
             break;
         case 'AS':
-            $q = "SELECT * FROM kesesuaian_item WHERE produk = 'as' AND tanggal = '{$_POST['data_date']}'";
+            $q = "SELECT * FROM perolehan WHERE tipe_produk = 'as' AND tanggal = '{$_POST['data_date']}'";
             break;
         case 'TS':
-            $q = "SELECT * FROM kesesuaian_item WHERE produk = 'ts' AND tanggal = '{$_POST['data_date']}'";
+            $q = "SELECT * FROM perolehan WHERE tipe_produk = 'ts' AND tanggal = '{$_POST['data_date']}'";
             break;
         case 'PN':
-            $q = "SELECT * FROM kesesuaian_item WHERE produk = 'pn' AND tanggal = '{$_POST['data_date']}'";
+            $q = "SELECT * FROM perolehan WHERE tipe_produk = 'pn' AND tanggal = '{$_POST['data_date']}'";
             break;
         case 'RC':
-            $q = "SELECT * FROM kesesuaian_item WHERE produk = 'rc' AND tanggal = '{$_POST['data_date']}'";
+            $q = "SELECT * FROM perolehan WHERE tipe_produk = 'rc' AND tanggal = '{$_POST['data_date']}'";
             break;
         default:
-            $q = "SELECT * FROM kesesuaian_item WHERE produk = 'vn' AND tanggal = '{$_POST['data_date']}'";
+            $q = "SELECT * FROM perolehan WHERE tipe_produk = 'vn' AND tanggal = '{$_POST['data_date']}'";
             break;
     }
 
