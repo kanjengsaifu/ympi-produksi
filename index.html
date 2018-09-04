@@ -208,7 +208,7 @@
                             else tsDiffMin = tsCalc;
 
                             // Populate datas
-                            finalData.tanggal = rawData.category;
+                            finalData.tanggal = rawData[0].category;
                             finalData.categories = [{
                                 "label": "FL"
                             }, {
@@ -336,7 +336,7 @@
         $('#title-chart-1, .marquee').addClass('d-none');
 
         // save respected value on a hidden fields
-        $('#hidden-date').val(moment(data.tanggal).utc().format('YYYY-MM-DD'));
+        $('#hidden-date').val(moment(data.tanggal).format('YYYY-MM-DD'));
         $('#hidden-type').val(data.categories[0].label);
 
         // main action
@@ -348,7 +348,7 @@
             dataSource: {
                 "chart": {
                     "caption": "Perolehan Produksi",
-                    "subCaption": "Tanggal " + moment(data.tanggal).utc().format('DD MMMM YY'),
+                    "subCaption": "Tanggal " + moment(data.tanggal).format('DD MMMM YY'),
                     // "xAxisName": "Produk",
                     "yAxisName": "Perolehan",
                     "theme": "fusion",
