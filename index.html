@@ -185,13 +185,30 @@
                         url: 'api/postData.php',
                         dataType: "json",
                         data: {
-                            id: dataObj.dataIndex + 1
+                            tanggal: moment(dataObj.categoryLabel).format('YYYY-MM-DD')
                         },
                         success: function(res) {
-                            var response = res.result;
+                            var rawObj = res.result;
+
+                            // call teh SortData Fn
+                            var rawData = sortData(rawObj);
+
+                            // Find each product's diff
+                            var flDiffPlus = 0, flDiffMin = 0, flCalc = rawData[0].flAct - rawData[0].flPlan;
+                            if (flCalc > 0) flDiffPlus = flCalc;
+                            else flDiffMin = flCalc;
+                            var clDiffPlus = 0, clDiffMin = 0, clCalc = rawData[0].clAct - rawData[0].clPlan;
+                            if (clCalc > 0) clDiffPlus = clCalc;
+                            else clDiffMin = clCalc;
+                            var asDiffPlus = 0, asDiffMin = 0, asCalc = rawData[0].asAct - rawData[0].asPlan;
+                            if (asCalc > 0) asDiffPlus = asCalc;
+                            else asDiffMin = asCalc;
+                            var tsDiffPlus = 0, tsDiffMin = 0, tsCalc = rawData[0].tsAct - rawData[0].tsPlan;
+                            if (tsCalc > 0) tsDiffPlus = tsCalc;
+                            else tsDiffMin = tsCalc;
 
                             // Populate datas
-                            finalData.tanggal = response.tanggal;
+                            finalData.tanggal = rawData.category;
                             finalData.categories = [{
                                 "label": "FL"
                             }, {
@@ -203,23 +220,23 @@
                             }];
 
                             finalData.surplus = [{
-                                "value": response.fl_plus
+                                "value": flDiffPlus
                             }, {
-                                "value": response.cl_plus
+                                "value": clDiffPlus
                             }, {
-                                "value": response.as_plus
+                                "value": asDiffPlus
                             }, {
-                                "value": response.ts_plus
+                                "value": tsDiffPlus
                             }];
 
                             finalData.minus = [{
-                                "value": "-" + response.fl_minus
+                                "value": flDiffMin
                             }, {
-                                "value": "-" + response.cl_minus
+                                "value": clDiffMin
                             }, {
-                                "value": "-" + response.as_minus
+                                "value": asDiffMin
                             }, {
-                                "value": "-" + response.ts_minus
+                                "value": tsDiffMin
                             }];
 
                             // Render the Extended Chart
@@ -417,69 +434,9 @@
                 if (response.status == 'ok') {
                     // Grouping data by "Tanggal"
                     var rawObj = response.result;
-                    var group_to_values = rawObj.reduce(function(obj, item) {
-                        obj[item.tanggal] = obj[item.tanggal] || [];
-                        obj[item.tanggal].push({
-                            tipe_produk: item.tipe_produk,
-                            gmc: item.gmc,
-                            description: item.description,
-                            plan: item.plan,
-                            actual: item.actual,
-                            diff_minus: item.diff_minus,
-                            diff_plus: item.diff_plus
-                        });
-                        return obj;
-                    }, {});
 
-                    var groups = Object.keys(group_to_values).map(function(key) {
-                        return {
-                            tanggal: key,
-                            data: group_to_values[key]
-                        };
-                    });
-
-                    // Then do grouping the result by "Tipe_produk"
-                    var rawData = [];
-                    groups.forEach(function(val) {
-                        var tempObj = {};
-                        // Iterate the "data" object
-                        var dtObj = val.data,
-                            dtFlPlan = 0,
-                            dtFlAct = 0,
-                            dtClPlan = 0,
-                            dtClAct = 0,
-                            dtAsPlan = 0,
-                            dtAsAct = 0,
-                            dtTsPlan = 0,
-                            dtTsAct = 0;
-                        dtObj.forEach(function(dt) {
-                            if (dt.tipe_produk == 'fl') {
-                                dtFlPlan += parseInt(dt.plan);
-                                dtFlAct += parseInt(dt.actual);
-                            } else if (dt.tipe_produk == 'cl') {
-                                dtClPlan += parseInt(dt.plan);
-                                dtClAct += parseInt(dt.actual);
-                            } else if (dt.tipe_produk == 'as') {
-                                dtAsPlan += parseInt(dt.plan);
-                                dtAsAct += parseInt(dt.actual);
-                            } else {
-                                dtTsPlan += parseInt(dt.plan);
-                                dtTsAct += parseInt(dt.actual);
-                            }
-                        });
-                        tempObj = {
-                            category: val.tanggal,
-                            flPlan: dtFlPlan,
-                            flAct: dtFlAct,
-                            clPlan: dtClPlan,
-                            clAct: dtClAct,
-                            asPlan: dtAsPlan,
-                            asAct: dtAsAct,
-                            tsPlan: dtTsPlan,
-                            tsAct: dtTsAct
-                        };
-                        rawData.push(tempObj);
-                    })
+                    // call teh SortData Fn
+                    var rawData = sortData(rawObj)
 
                     // Populating for chart
                     rawData.forEach(function(data) {
@@ -523,6 +480,72 @@
                 renderMainChart(finalData);
             }
         });
+    }
+
+    var sortData = function(rawObj) {
+        var group_to_values = rawObj.reduce(function(obj, item) {
+            obj[item.tanggal] = obj[item.tanggal] || [];
+            obj[item.tanggal].push({
+                tipe_produk: item.tipe_produk,
+                gmc: item.gmc,
+                description: item.description,
+                plan: item.plan,
+                actual: item.actual
+            });
+            return obj;
+        }, {});
+
+        var groups = Object.keys(group_to_values).map(function(key) {
+            return {
+                tanggal: key,
+                data: group_to_values[key]
+            };
+        });
+
+        // Then do grouping the result by "Tipe_produk"
+        var rawData = [];
+        groups.forEach(function(val) {
+            var tempObj = {};
+            // Iterate the "data" object
+            var dtObj = val.data,
+                dtFlPlan = 0,
+                dtFlAct = 0,
+                dtClPlan = 0,
+                dtClAct = 0,
+                dtAsPlan = 0,
+                dtAsAct = 0,
+                dtTsPlan = 0,
+                dtTsAct = 0;
+            dtObj.forEach(function(dt) {
+                if (dt.tipe_produk == 'fl') {
+                    dtFlPlan += parseInt(dt.plan);
+                    dtFlAct += parseInt(dt.actual);
+                } else if (dt.tipe_produk == 'cl') {
+                    dtClPlan += parseInt(dt.plan);
+                    dtClAct += parseInt(dt.actual);
+                } else if (dt.tipe_produk == 'as') {
+                    dtAsPlan += parseInt(dt.plan);
+                    dtAsAct += parseInt(dt.actual);
+                } else {
+                    dtTsPlan += parseInt(dt.plan);
+                    dtTsAct += parseInt(dt.actual);
+                }
+            });
+            tempObj = {
+                category: val.tanggal,
+                flPlan: dtFlPlan,
+                flAct: dtFlAct,
+                clPlan: dtClPlan,
+                clAct: dtClAct,
+                asPlan: dtAsPlan,
+                asAct: dtAsAct,
+                tsPlan: dtTsPlan,
+                tsAct: dtTsAct
+            };
+            rawData.push(tempObj);
+        });
+
+        return rawData;
     }
 
     // DOM event

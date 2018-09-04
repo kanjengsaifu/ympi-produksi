@@ -1,13 +1,19 @@
 <?php
 include "conn.php";
+include "inc/chromePhp.php";
 
-if (!empty($_POST['id'])) {
-    $query = $db->query("SELECT * FROM perolehan WHERE id = {$_POST['id']}");
+// ChromePhp::log($_POST['tanggal']);
+
+if (!empty($_POST['tanggal'])) {
+    $query = $db->query("SELECT * FROM perolehan WHERE tanggal = '{$_POST['tanggal']}'");
+    $rows = array();
 
     if ($query->num_rows > 0) {
-        $res = $query->fetch_assoc();
+        while ($r = mysqli_fetch_assoc($query)) {
+            $rows[] = $r;
+        }
         $data['status'] = 'ok';
-        $data['result'] = $res;
+        $data['result'] = $rows;
     } else {
         $data['status'] = 'err';
         $data['result'] = '';
