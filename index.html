@@ -16,13 +16,36 @@
     <script src="assets/js/fusioncharts.theme.fusion.js"></script>
     <!-- Moment.js -->
     <script src="assets/js/moment.min.js"></script>
-    <!-- Scrollbox.js -->
-    <script src="assets/js/scrollbox.min.js"></script>
     <style type="text/css" media="screen">
+    @keyframes marquee {
+        0% {
+            text-indent: 430px
+        }
+        100% {
+            text-indent: -485px
+        }
+    }
+
+    @-webkit-keyframes marquee {
+        0% {
+            text-indent: 430px
+        }
+        100% {
+            text-indent: -485px
+        }
+    }
+
     .marquee {
-        width: 100%;
         overflow: hidden;
+        white-space: nowrap;
+        animation: marquee 20s linear infinite;
+        -webkit-animation: marquee 20s linear infinite;width: 100%;
         background: #FFC300;
+    }
+
+    .marquee:hover {
+        -webkit-animation-play-state: paused;
+        animation-play-state: paused;
     }
     </style>
 </head>
@@ -33,10 +56,10 @@
             <div class="col-12">
                 <div class="text-center">
                     <h5 id="title-chart-1">Perolehan Produksi Harian (FL, CL, AS, TS)</h5>
-                    <div class="pt-1 pb-1">
-                        <div class="marquee">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus sem ante, suscipit eget mauris eu, aliquam fringilla nisi.
-                        </div>
+                    <div class="pt-1 pb-1 marquee">
+                        <!-- <marquee> -->
+                            <span style="font-family: Impact; font-size: 18pt">Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor!</span>
+                        <!-- </marquee> -->
                     </div>
                 </div>
                 <div id="chart-container-1" class="text-center">Chart #1 will load here!</div>
@@ -48,10 +71,10 @@
             <div class="col-12 d-none" id="chart-2">
                 <div class="text-center">
                     <h5 id="title-chart-2">Perolehan Produksi Harian (PN, RC, VN)</h5>
-                    <div class="pt-1 pb-1">
-                        <div class="marquee">
-                            Nunc vestibulum vestibulum lacus, sit amet aliquet nisi semper at. Aliquam tincidunt, libero sed vulputate maximus, nisl odio facilisis nibh, sit amet dictum lorem sem vel nunc.
-                        </div>
+                    <div class="pt-1 pb-1 marquee">
+                        <!-- <marquee> -->
+                            <span style="font-family: Impact; font-size: 18pt">Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor!</span>
+                        <!-- </marquee> -->
                     </div>
                 </div>
                 <div id="chart-container-2" class="text-center">Chart #2 will load here!</div>
@@ -433,24 +456,10 @@
         });
     }
 
-    // Render marquee Fn
-    var renderMarquee = function() {
-        $('.marquee').marquee({
-            duration: 15000,
-            gap: 50,
-            delayBeforeStart: 0,
-            direction: 'left',
-            duplicated: true
-        });
-    }
-
     // DOM event
     $(document).ready(function() {
         // Render main chart
         initiateData();
-
-        // Marque texts
-        renderMarquee();
 
         // Button close
         $('#btn-close').click(function() {
@@ -508,7 +517,7 @@
                             "color": "#FFC107"
                         }];
                     }
-                    
+
                     // Render WS chart
                     $('#chart-container-1').insertFusionCharts({
                         type: 'column3d',
