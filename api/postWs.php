@@ -21,7 +21,7 @@ if (!empty($_POST['data_type'])) {
 
         $data['status'] = 'ok';
         $data['result'] = $rows;
-        $data['result'][0]['data_type'] = $_POST['type'];
+        $data['result'][0]['data_type'] = $_POST['data_type'];
     } else {
         $data['status'] = 'err';
         $data['result'] = '';
