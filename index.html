@@ -166,7 +166,8 @@
                     "divLineIsDashed": "1",
                     "divLineDashLen": "1",
                     "divLineGapLen": "1",
-                    "showValues": "1"
+                    "showValues": "1",
+                    "id": 'main-chart'
                 },
                 "categories": [{
                     "category": data.categories
@@ -391,14 +392,14 @@
         $('#hidden-type').val(data.categories[0].label);
 
         if (data.categories.length == 3) {
-        	// exclude the minus mark (-) from PN, RC, VN products
-        	var tempArr = [];
-        	data.minus.forEach(function(item) {
-        		tempArr.push({
-        			"value": Math.abs(item.value)
-        		})
-        	})
-        	data.minus = tempArr;
+            // exclude the minus mark (-) from PN, RC, VN products
+            var tempArr = [];
+            data.minus.forEach(function(item) {
+                tempArr.push({
+                    "value": Math.abs(item.value)
+                })
+            })
+            data.minus = tempArr;
         }
 
         // main action
@@ -418,7 +419,8 @@
                     "divLineIsDashed": "1",
                     "divLineDashLen": "1",
                     "divLineGapLen": "1",
-                    "showValues": "1"
+                    "showValues": "1",
+                    "id": 'main-chart'
                 },
                 "categories": [{
                     "category": data.categories
@@ -718,10 +720,14 @@
                                 "divLineGapLen": "1",
                                 "showValues": "1",
                                 "numberSuffix": "%",
+                                "id": 'main-chart'
                             },
                             "data": dataSet
                         }
                     });
+                },
+                error: function(err) {
+                	alert(err);
                 }
             })
         });
