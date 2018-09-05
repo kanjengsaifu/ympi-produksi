@@ -627,9 +627,9 @@
     // Sort Data Fn (for WS chart)
     var sortWsData = function(rawObj) {
         var group_to_values = rawObj.reduce(function(obj, item) {
-            obj[item.tanggal] = obj[item.tanggal] || [];
-            obj[item.tanggal].push({
-                produk: item.produk,
+            obj[item.produk] = obj[item.produk] || [];
+            obj[item.produk].push({
+                tanggal: item.tanggal,
                 target_persentase: item.target_persentase,
                 persentase_shipment: item.persentase_shipment
             });
@@ -638,7 +638,7 @@
 
         var groups = Object.keys(group_to_values).map(function(key) {
             return {
-                tanggal: key,
+                produk: key,
                 data: group_to_values[key]
             };
         });
@@ -678,27 +678,15 @@
                     var rawData = response.result;
                     var sortedData = sortWsData(rawData);
 
-                    var dataCat = [],
-                        dataSet = [];
-                    sortedData.forEach(function(val) {
-                        // compile category array
-                        dataCat.push({
-                            "label": val.tanggal
+                    var dataSet = [];
+                    sortedData.forEach(function(dt) {
+                        var tempData = dt.data;
+                        var maxPerc = Math.max.apply(Math, tempData.map(function(o) { return o.persentase_shipment; }))
+                        dataSet.push({
+                            "label": dt.produk.toUpperCase(),
+                            "value": maxPerc
                         });
-
-                        // compile dataset array
-                        var dataProd = val.data;
-                        var tempSet = [];
-                        dataProd.forEach(function(item) {
-                            console.log(item)
-                            // dataSet.push({
-                            //     "seriesname": item.produk,
-                            //     "data": item.persentase_shipment
-                            // });
-                        });
-                    });
-
-                    // console.log(dataCat, dataSet);
+                    })
 
                     // Render WS chart
                     $('#chart-container-1').insertFusionCharts({
@@ -720,8 +708,7 @@
                                 "showValues": "1",
                                 "numberSuffix": "%",
                             },
-                            "categories": dataCat,
-                            "dataset": dataSet
+                            "data": dataSet
                         }
                     });
                 }
