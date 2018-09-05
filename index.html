@@ -490,7 +490,8 @@
                     var rawObj = response.result;
 
                     // call teh SortData Fn
-                    var rawData = sortData(rawObj)
+                    var rawData = sortData(rawObj);
+                        console.log(rawData);
 
                     // Populating for chart
                     rawData.forEach(function(data) {
@@ -509,13 +510,13 @@
                         }
                         dataActual.push(dtAct);
 
-                        dtPlan2 = {
+                        var dtPlan2 = {
                             "value": data.pnPlan + data.rcPlan + data.vnPlan
                         }
                         dataPlan2.push(dtPlan2);
 
-                        dtAct2 = {
-                            "value": data.pnAct + data.pnAct + data.vnAct
+                        var dtAct2 = {
+                            "value": data.pnAct + data.rcAct + data.vnAct
                         }
                         dataActual2.push(dtAct2);
                     })
