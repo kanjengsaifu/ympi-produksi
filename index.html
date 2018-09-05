@@ -166,7 +166,8 @@
                     "divLineIsDashed": "1",
                     "divLineDashLen": "1",
                     "divLineGapLen": "1",
-                    "showValues": "1"
+                    "showValues": "1",
+                    "id": 'main-chart'
                 },
                 "categories": [{
                     "category": data.categories
@@ -390,6 +391,17 @@
         $('#hidden-date').val(moment(data.tanggal).format('YYYY-MM-DD'));
         $('#hidden-type').val(data.categories[0].label);
 
+        if (data.categories.length == 3) {
+            // exclude the minus mark (-) from PN, RC, VN products
+            var tempArr = [];
+            data.minus.forEach(function(item) {
+                tempArr.push({
+                    "value": Math.abs(item.value)
+                })
+            })
+            data.minus = tempArr;
+        }
+
         // main action
         $('#chart-container-1').insertFusionCharts({
             type: 'mscolumn3d',
@@ -407,7 +419,8 @@
                     "divLineIsDashed": "1",
                     "divLineDashLen": "1",
                     "divLineGapLen": "1",
-                    "showValues": "1"
+                    "showValues": "1",
+                    "id": 'main-chart'
                 },
                 "categories": [{
                     "category": data.categories
@@ -491,7 +504,6 @@
 
                     // call teh SortData Fn
                     var rawData = sortData(rawObj);
-                        console.log(rawData);
 
                     // Populating for chart
                     rawData.forEach(function(data) {
@@ -708,10 +720,14 @@
                                 "divLineGapLen": "1",
                                 "showValues": "1",
                                 "numberSuffix": "%",
+                                "id": 'main-chart'
                             },
                             "data": dataSet
                         }
                     });
+                },
+                error: function(err) {
+                	alert(err);
                 }
             })
         });
