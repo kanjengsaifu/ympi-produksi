@@ -1,7 +1,7 @@
 <?php
 include "conn.php";
 
-$query = $db->query("SELECT * FROM perolehan ORDER BY id");
+$query = $db->query("SELECT * FROM perolehan");
 $rows = array();
 
 if ($query->num_rows > 0) {

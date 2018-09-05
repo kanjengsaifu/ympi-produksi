@@ -5,7 +5,7 @@ include "inc/chromePhp.php";
 // ChromePhp::log($_POST['tanggal']);
 
 if (!empty($_POST['tanggal'])) {
-    $query = $db->query("SELECT * FROM perolehan WHERE tanggal = '{$_POST['tanggal']}' AND tipe_produk = 'pn' OR tipe_produk = 'rc' OR tipe_produk = 'vn'");
+    $query = $db->query("SELECT * FROM perolehan WHERE tanggal = '{$_POST['tanggal']}' AND (tipe_produk = 'pn' OR tipe_produk = 'rc' OR tipe_produk = 'vn')");
     $rows = array();
 
     if ($query->num_rows > 0) {
