@@ -390,6 +390,17 @@
         $('#hidden-date').val(moment(data.tanggal).format('YYYY-MM-DD'));
         $('#hidden-type').val(data.categories[0].label);
 
+        if (data.categories.length == 3) {
+        	// exclude the minus mark (-) from PN, RC, VN products
+        	var tempArr = [];
+        	data.minus.forEach(function(item) {
+        		tempArr.push({
+        			"value": Math.abs(item.value)
+        		})
+        	})
+        	data.minus = tempArr;
+        }
+
         // main action
         $('#chart-container-1').insertFusionCharts({
             type: 'mscolumn3d',
@@ -491,7 +502,6 @@
 
                     // call teh SortData Fn
                     var rawData = sortData(rawObj);
-                        console.log(rawData);
 
                     // Populating for chart
                     rawData.forEach(function(data) {
