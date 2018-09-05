@@ -687,23 +687,51 @@
                     // hide WS button
                     $('#btn-ws').addClass('d-none');
 
+                    // Function to get the latest date
+                    function getLatestDate(data) {
+                        var maxNumb = [];
+                        for (var y = 0; y < data.data.length; y++) {
+                            maxNumb.push(new Date(data.data[y].tanggal));
+                        }
+                        var latestDate = moment(new Date(Math.max.apply(null, maxNumb))).format('YYYY-MM-DD');
+                        return latestDate;
+                    }
+
                     // Populate dataset
+                    var dataSet = [],
+                        dataCat = [],
+                        tempPlan = [],
+                        tempAct = [];
                     var rawData = response.result;
                     var sortedData = sortWsData(rawData);
-
-                    var dataSet = [];
                     sortedData.forEach(function(dt) {
-                        var tempData = dt.data;
-                        var maxPerc = Math.max.apply(Math, tempData.map(function(o) { return o.persentase_shipment; }))
-                        dataSet.push({
-                            "label": dt.produk.toUpperCase(),
-                            "value": maxPerc
+                        dataCat.push({
+                            "label": dt.produk.toUpperCase()
                         });
-                    })
+
+                        var filteredData = [];
+                        var theDate = getLatestDate(dt);
+                        dt.data.forEach(function(x) {
+                            if (x.tanggal == theDate) filteredData.push(x);
+                        });
+
+                        filteredData.forEach(function(y) {
+                            tempPlan.push({ "value": y.target_persentase });
+                            tempAct.push({ "value": y.persentase_shipment });
+                        })
+                    });
+
+                    dataSet = [{
+                        "seriesname": "Target Persentase",
+                        "data": tempPlan
+                    }, {
+                        "seriesname": "Persentase Shipment",
+                        "data": tempAct
+                    }];
 
                     // Render WS chart
                     $('#chart-container-1').insertFusionCharts({
-                        type: 'column3d',
+                        type: 'mscolumn3d',
                         width: 1024,
                         height: 600,
                         dataFormat: 'json',
@@ -722,12 +750,15 @@
                                 "numberSuffix": "%",
                                 "id": 'main-chart'
                             },
-                            "data": dataSet
+                            "categories": [{
+                                "category": dataCat
+                            }],
+                            "dataset": dataSet
                         }
                     });
                 },
                 error: function(err) {
-                	alert(JSON.stringify(err));
+                    alert(JSON.stringify(err));
                 }
             })
         });
