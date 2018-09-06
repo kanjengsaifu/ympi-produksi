@@ -695,7 +695,6 @@
                 success: function(response) {
                     // hide WS button
                     $('#btn-ws').addClass('d-none');
-                    $('#marquee-text').html('Ini teks nya...');
 
                     // Function to get the latest date
                     function getLatestDate(data) {
@@ -714,6 +713,14 @@
                         tempAct = [];
                     var rawData = response.result;
                     var sortedData = sortWsData(rawData);
+
+                    // Generate marquees
+                    if (sortedData.length > 3) {
+                        $('#marquee-text').html('Ini utk produk FL,etc');
+                    } else {
+                        $('#marquee-text').html('Ini utk produk PN,etc');
+                    }
+
                     sortedData.forEach(function(dt) {
                         dataCat.push({
                             "label": dt.produk.toUpperCase()
