@@ -389,7 +389,6 @@
 
         // hide chart #1 title and marquee
         $('#title-chart-1').addClass('d-none');
-        $('#marquee-text').html('Place your text here...');
 
         // save respected value on a hidden fields
         $('#hidden-date').val(moment(data.tanggal).format('YYYY-MM-DD'));
@@ -404,6 +403,12 @@
                 })
             })
             data.minus = tempArr;
+
+            // Marque for PN,RC,VN products
+            $('#marquee-text').html('This is PN,RC,VN marquee...');
+        } else {
+            // Marque for FL,CL,AS,TS products
+            $('#marquee-text').html('This is FL,CL,AS,TS marquee...');
         }
 
         // main action
@@ -690,6 +695,7 @@
                 success: function(response) {
                     // hide WS button
                     $('#btn-ws').addClass('d-none');
+                    $('#marquee-text').html('Ini teks nya...');
 
                     // Function to get the latest date
                     function getLatestDate(data) {
