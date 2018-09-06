@@ -61,7 +61,7 @@
                     <h5 id="title-chart-1">Perolehan Produksi (FL, CL, AS, TS)</h5>
                     <div class="pt-1 pb-1 marquee">
                         <!-- <marquee> -->
-                        <span style="font-family: Impact; font-size: 18pt">Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor!</span>
+                        <span style="font-family: Impact; font-size: 18pt" id="marquee-text">Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor!</span>
                         <!-- </marquee> -->
                     </div>
                 </div>
@@ -150,6 +150,9 @@
 
         // Un-hide chart #2 container
         $('#chart-2').removeClass('d-none');
+
+        // Set marwuee text
+        $('#marquee-text').html('Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor!');
 
         // Chart #1
         $('#chart-container-1').insertFusionCharts({
@@ -385,7 +388,8 @@
         $('#chart-2').addClass('d-none');
 
         // hide chart #1 title and marquee
-        $('#title-chart-1, .marquee').addClass('d-none');
+        $('#title-chart-1').addClass('d-none');
+        $('#marquee-text').html('Place your text here...');
 
         // save respected value on a hidden fields
         $('#hidden-date').val(moment(data.tanggal).format('YYYY-MM-DD'));
