@@ -39,11 +39,12 @@
         overflow: hidden;
         white-space: nowrap;
         animation: marquee 20s linear infinite;
-        marquee-speed: fast;
+        marquee-speed: fastest;
         -webkit-animation: marquee 20s linear infinite;
-        -webkit-marquee-speed: fast;
+        -webkit-marquee-speed: fastest;
         width: 100%;
-        background: #FFC300;
+        background: #FFFF00;
+
     }
 
     .marquee:hover {
@@ -61,7 +62,7 @@
                     <h5 id="title-chart-1">Perolehan Produksi (FL, CL, AS, TS)</h5>
                     <div class="pt-1 pb-1 marquee">
                         <!-- <marquee> -->
-                        <span style="font-family: Impact; font-size: 18pt">Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor!</span>
+                        <span style="font-family: Impact; font-size: 18pt" id="marquee-text">... Gatsu ... made no, seisan no kekka wo houkoku shimasu . Diinformasikan hasil produksi sampai tanggal ...</span>
                         <!-- </marquee> -->
                     </div>
                 </div>
@@ -76,7 +77,7 @@
                     <h5 id="title-chart-2">Perolehan Produksi (PN, RC, VN)</h5>
                     <div class="pt-1 pb-1 marquee">
                         <!-- <marquee> -->
-                        <span style="font-family: Impact; font-size: 18pt">Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor!</span>
+                        <span style="font-family: Impact; font-size: 18pt">... Gatsu ... made no, seisan no kekka wo houkoku shimasu . Diinformasikan hasil produksi sampai tanggal ...</span>
                         <!-- </marquee> -->
                     </div>
                 </div>
@@ -150,6 +151,9 @@
 
         // Un-hide chart #2 container
         $('#chart-2').removeClass('d-none');
+
+        // Set marwuee text
+        $('#marquee-text').html('... Gatsu ... made no, seisan no kekka wo houkoku shimasu . Diinformasikan hasil produksi sampai tanggal ...');
 
         // Chart #1
         $('#chart-container-1').insertFusionCharts({
@@ -385,7 +389,7 @@
         $('#chart-2').addClass('d-none');
 
         // hide chart #1 title and marquee
-        $('#title-chart-1, .marquee').addClass('d-none');
+        $('#title-chart-1').addClass('d-none');
 
         // save respected value on a hidden fields
         $('#hidden-date').val(moment(data.tanggal).format('YYYY-MM-DD'));
@@ -400,6 +404,12 @@
                 })
             })
             data.minus = tempArr;
+
+            // Marque for PN,RC,VN products
+            $('#marquee-text').html('Aitemu goto no seisan no kekka wa. Hasil kesesuaian per item sebagai berikut: KBI kara case pianica no okure ga arimasu kara, pianica wa mainasu Hap Hyaku roku juu setto desu. Karena ada keterlambatan case Pianica dari KBI, Pianica minus 860 set. Rikooda to Venova no aitemu go to no okure wa arimasen. Tidak ada keterlambatan per item untuk produk Recorder dan Venova');
+        } else {
+            // Marque for FL,CL,AS,TS products
+            $('#marquee-text').html('Aitemu goto no seisan no kekka wa. Hasil kesesuaian per item sebagai berikut: Furuto wa mainasu Ni Juu Go setto, purasu Ni Juu Go setto desu. FL minus 25 set, plus 25 set. Kurarinetto wa mainasu Juu setto, purasu Juu setto desu. Aruto sakkusu wa mainasu Ni Juu setto, purasu Ni Juu setto desu. Sax Alto minus 20 set, plus 20 set. Tena Sakkusu wa mainasu Go setto. Purasu Go setto desu. Sax Tenor minus 5 set, plus 5 set');
         }
 
         // main action
@@ -687,23 +697,59 @@
                     // hide WS button
                     $('#btn-ws').addClass('d-none');
 
+                    // Function to get the latest date
+                    function getLatestDate(data) {
+                        var maxNumb = [];
+                        for (var y = 0; y < data.data.length; y++) {
+                            maxNumb.push(new Date(data.data[y].tanggal));
+                        }
+                        var latestDate = moment(new Date(Math.max.apply(null, maxNumb))).format('YYYY-MM-DD');
+                        return latestDate;
+                    }
+
                     // Populate dataset
+                    var dataSet = [],
+                        dataCat = [],
+                        tempPlan = [],
+                        tempAct = [];
                     var rawData = response.result;
                     var sortedData = sortWsData(rawData);
 
-                    var dataSet = [];
+                    // Generate marquees
+                    if (sortedData.length > 3) {
+                        $('#marquee-text').html('San Juu Go shuume no, shuuji shukka wo, tassei suru tameni, hachi gatsu san juu nichi made no, souko e no, shukka kekka wo, houkokushimasu . Pengiriman ke Gudang sampai tanggal 30 Agustus untuk pencapaian target weekly export week 35 sebagai : Furuuto wa hyaku pasento, flute FG 100%, Kurarinetto wa hyaku paasento, Clarinet FG 100%. Aruto sakkusu wa hyaku paasento. Teena sakkusu wa hyaku paasento desu. Sax Tenor FG 100%');
+                    } else {
+                        $('#marquee-text').html('San Juu Go shuume no, shuuji shukka wo, tassei suru tameni, hachi gatsu san juu nichi made no, souko e no, shukka kekka wo, houkokushimasu . Pengiriman ke Gudang sampai tanggal 30 Agustus untuk pencapaian target weekly export week 35 sebagai : Kanseihin wa zenbu hyaku passento desu. Semua FG 100%');
+                    }
+
                     sortedData.forEach(function(dt) {
-                        var tempData = dt.data;
-                        var maxPerc = Math.max.apply(Math, tempData.map(function(o) { return o.persentase_shipment; }))
-                        dataSet.push({
-                            "label": dt.produk.toUpperCase(),
-                            "value": maxPerc
+                        dataCat.push({
+                            "label": dt.produk.toUpperCase()
                         });
-                    })
+
+                        var filteredData = [];
+                        var theDate = getLatestDate(dt);
+                        dt.data.forEach(function(x) {
+                            if (x.tanggal == theDate) filteredData.push(x);
+                        });
+
+                        filteredData.forEach(function(y) {
+                            tempPlan.push({ "value": y.target_persentase });
+                            tempAct.push({ "value": y.persentase_shipment });
+                        })
+                    });
+
+                    dataSet = [{
+                        "seriesname": "Target Persentase",
+                        "data": tempPlan
+                    }, {
+                        "seriesname": "Persentase Shipment",
+                        "data": tempAct
+                    }];
 
                     // Render WS chart
                     $('#chart-container-1').insertFusionCharts({
-                        type: 'column3d',
+                        type: 'mscolumn3d',
                         width: 1024,
                         height: 600,
                         dataFormat: 'json',
@@ -722,12 +768,15 @@
                                 "numberSuffix": "%",
                                 "id": 'main-chart'
                             },
-                            "data": dataSet
+                            "categories": [{
+                                "category": dataCat
+                            }],
+                            "dataset": dataSet
                         }
                     });
                 },
                 error: function(err) {
-                	alert(JSON.stringify(err));
+                    alert(JSON.stringify(err));
                 }
             })
         });
