@@ -317,31 +317,24 @@
                         success: function(res) {
                             var rawObj = res.result;
 
-                            // Find each product's diff
-                            var pnDiffPlus = 0,
-                                pnDiffMin = 0,
-                                rcDiffPlus = 0,
-                                rcDiffMin = 0,
-                                vnDiffPlus = 0,
-                                vnDiffMin = 0;
+                            console.log(rawObj);
 
+                            // Find each product's total ACTUAL and PLAN
+                            var pnTotAct = 0, pnTotPlan = 0, rcTotAct = 0, rcTotPlan = 0, vnTotAct = 0, vnTotPlan = 0;
                             rawObj.forEach(function(dt) {
                                 if (dt.tipe_produk == 'pn') {
-                                    var pnCalc = dt.actual - dt.plan;
-                                    if (pnCalc > 0) pnDiffPlus += pnCalc;
-                                    else pnDiffMin += pnCalc;
+                                    pnTotAct += parseInt(dt.actual);
+                                    pnTotPlan += parseInt(dt.plan);
                                 }
 
                                 if (dt.tipe_produk == 'rc') {
-                                    var rcCalc = dt.actual - dt.plan;
-                                    if (rcCalc > 0) rcDiffPlus += rcCalc;
-                                    else rcDiffMin += rcCalc;
+                                    rcTotAct += parseInt(dt.actual);
+                                    rcTotPlan += parseInt(dt.plan);
                                 }
 
                                 if (dt.tipe_produk == 'vn') {
-                                    var vnCalc = dt.actual - dt.plan;
-                                    if (vnCalc > 0) vnDiffPlus += vnCalc;
-                                    else vnDiffMin += vnCalc;
+                                    vnTotAct += parseInt(dt.actual);
+                                    vnTotPlan += parseInt(dt.plan);
                                 }
                             })
 
@@ -356,19 +349,19 @@
                             }];
 
                             finalData.surplus = [{
-                                "value": pnDiffPlus
+                                "value": pnTotAct
                             }, {
-                                "value": rcDiffPlus
+                                "value": rcTotAct
                             }, {
-                                "value": vnDiffPlus
+                                "value": vnTotAct
                             }];
 
                             finalData.minus = [{
-                                "value": pnDiffMin
+                                "value": pnTotPlan
                             }, {
-                                "value": rcDiffMin
+                                "value": rcTotPlan
                             }, {
-                                "value": vnDiffMin
+                                "value": vnTotPlan
                             }];
 
                             // Render the Extended Chart
