@@ -103,7 +103,8 @@
                                     <th scope="col">Desc</th>
                                     <th scope="col">Plan</th>
                                     <th scope="col">Actual</th>
-                                    <th scope="col">Diff</th>
+                                    <th scope="col">Diff +</th>
+                                    <th scope="col">Diff -</th>
                                 </tr>
                             </thead>
                             <tbody id="table-data"></tbody>
@@ -112,7 +113,8 @@
                                     <th colspan="2">Total</th>
                                     <th id="table-total-plan"></th>
                                     <th id="table-total-actual"></th>
-                                    <th></th>
+                                    <th id="table-total-diff-plus"></th>
+                                    <th id="table-total-diff-minus"></th>
                                 </tr>
                             </tfoot>
                         </table>
@@ -208,8 +210,6 @@
                                 asDiffMin = 0,
                                 tsDiffPlus = 0,
                                 tsDiffMin = 0;
-
-                            console.log(rawObj);
 
                             rawObj.forEach(function(dt) {
                                 if (dt.tipe_produk == 'fl') {
@@ -458,17 +458,24 @@
                                 $("#table-data").html('');
 
                                 if (res.status == 'ok') {
-                                    var totPlan = 0,
-                                        totAct = 0;
+                                    var totPlan = 0, totAct = 0, totDiffPlus = 0, totDiffMin = 0;
                                     $.each(res.result, function(key, value) {
                                         var diff = value.actual - value.plan;
-                                        $("#table-data").append("<tr><td>" + value.gmc + "</td><td>" + value.description + "</td><td>" + value.plan + "</td><td>" + value.actual + "</td><td><strong>" + diff + "</strong></td></tr>");
+                                        if (diff < 0) var diffMin = diff, diffPlus = 0;
+                                        else var diffPlus = diff, diffMin = 0;
+
+                                        $("#table-data").append("<tr><td>" + value.gmc + "</td><td>" + value.description + "</td><td>" + value.plan + "</td><td>" + value.actual + "</td><td>" + diffPlus + "</td><td>" + diffMin + "</td></tr>");
+
                                         totPlan += parseInt(value.plan);
                                         totAct += parseInt(value.actual);
+                                        totDiffPlus += parseInt(diffPlus);
+                                        totDiffMin += parseInt(diffMin);
                                     })
                                     // append the Qty total
                                     $('#table-total-plan').html(totPlan);
                                     $('#table-total-actual').html(totAct);
+                                    $('#table-total-diff-plus').html(totDiffPlus);
+                                    $('#table-total-diff-minus').html(totDiffMin);
 
                                     // Show the MODAL
                                     $('#modal').modal('show');
