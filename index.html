@@ -209,6 +209,8 @@
                                 tsDiffPlus = 0,
                                 tsDiffMin = 0;
 
+                            console.log(rawObj);
+
                             rawObj.forEach(function(dt) {
                                 if (dt.tipe_produk == 'fl') {
                                     var flCalc = dt.actual - dt.plan;
@@ -316,8 +318,6 @@
                         },
                         success: function(res) {
                             var rawObj = res.result;
-
-                            console.log(rawObj);
 
                             // Find each product's total ACTUAL and PLAN
                             var pnTotAct = 0, pnTotPlan = 0, rcTotAct = 0, rcTotPlan = 0, vnTotAct = 0, vnTotPlan = 0;
