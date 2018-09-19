@@ -11,7 +11,7 @@ var renderMainChart = function(data) {
 
     // Chart #1
     $('#chart-container-1').insertFusionCharts({
-        type: 'mscolumn3d',
+        type: 'mscolumn2d',
         width: 1024,
         height: 300,
         dataFormat: 'json',
@@ -25,6 +25,7 @@ var renderMainChart = function(data) {
                 "divLineDashLen": "1",
                 "divLineGapLen": "1",
                 "showValues": "1",
+                "valueFontSize": "10",
                 "id": 'main-chart'
             },
             "categories": [{
@@ -131,7 +132,7 @@ var renderMainChart = function(data) {
 
     // Chart #2
     $('#chart-container-2').insertFusionCharts({
-        type: 'mscolumn3d',
+        type: 'mscolumn2d',
         width: 1024,
         height: 300,
         dataFormat: 'json',
@@ -144,6 +145,7 @@ var renderMainChart = function(data) {
                 "divLineDashLen": "1",
                 "divLineGapLen": "1",
                 "showValues": "1",
+                "valueFontSize": "10",
                 "formatNumberScale": "0"
             },
             "categories": [{
@@ -260,7 +262,7 @@ var renderExtChart = function(data) {
 
     // main action
     $('#chart-container-1').insertFusionCharts({
-        type: 'mscolumn3d',
+        type: 'mscolumn2d',
         width: 1024,
         height: 600,
         dataFormat: 'json',
@@ -276,6 +278,7 @@ var renderExtChart = function(data) {
                 "divLineDashLen": "1",
                 "divLineGapLen": "1",
                 "showValues": "1",
+                "valueFontSize": "10",
                 "id": 'main-chart',
                 "formatNumberScale": "0"
             },
@@ -354,6 +357,10 @@ var renderExtChart = function(data) {
 var initiateData = function() {
     // reset components this.state
     $('.marquee, #title-chart-1').removeClass('d-none');
+
+    // reset all Charts states
+    console.log("Resetting charts...");
+    $('#chart-container-1, #chart-container-2').html();
 
     $.ajax({
         type: 'GET',
