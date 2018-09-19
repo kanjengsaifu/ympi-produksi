@@ -338,7 +338,7 @@ var renderExtChart = function(data) {
                                     else var diffPlus = diff,
                                         diffMin = 0;
 
-                                    $("#table-data").append("<tr><td>" + value.gmc + "</td><td>" + value.description + "</td><td class='text-right'>" + value.plan + "</td><td class='text-right'>" + value.actual + "</td><td class='text-right'>" + diffPlus + "</td><td class='text-right'>" + diffMin + "</td></tr>");
+                                    $("#table-data").append("<tr><td>" + value.gmc + "</td><td>" + value.description + "</td><td class='text-right'>" + numberWithCommas(value.plan) + "</td><td class='text-right'>" + numberWithCommas(value.actual) + "</td><td class='text-right'>" + numberWithCommas(diffPlus) + "</td><td class='text-right'>" + numberWithCommas(diffMin) + "</td></tr>");
 
                                     totPlan += parseInt(value.plan);
                                     totAct += parseInt(value.actual);
