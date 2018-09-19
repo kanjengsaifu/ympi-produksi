@@ -1,3 +1,16 @@
+// Function for number formatting
+var numberWithCommas = function(nStr) {
+  nStr += '';
+    x = nStr.split('.');
+    x1 = x[0];
+    x2 = x.length > 1 ? '.' + x[1] : '';
+    var rgx = /(\d+)(\d{3})/;
+    while (rgx.test(x1)) {
+        x1 = x1.replace(rgx, '$1' + '.' + '$2');
+    }
+    return x1 + x2;
+}
+
 // Function for rendering main chart
 var renderMainChart = function(data) {
     // hide buttons
@@ -145,8 +158,7 @@ var renderMainChart = function(data) {
                 "divLineDashLen": "1",
                 "divLineGapLen": "1",
                 "showValues": "1",
-                "valueFontSize": "10",
-                "formatNumberScale": "0"
+                "valueFontSize": "10"
             },
             "categories": [{
                 "category": data.categories
@@ -279,8 +291,7 @@ var renderExtChart = function(data) {
                 "divLineGapLen": "1",
                 "showValues": "1",
                 "valueFontSize": "10",
-                "id": 'main-chart',
-                "formatNumberScale": "0"
+                "id": 'main-chart'
             },
             "categories": [{
                 "category": data.categories
@@ -327,13 +338,21 @@ var renderExtChart = function(data) {
                                     else var diffPlus = diff,
                                         diffMin = 0;
 
-                                    $("#table-data").append("<tr><td>" + value.gmc + "</td><td>" + value.description + "</td><td>" + value.plan + "</td><td>" + value.actual + "</td><td>" + diffPlus + "</td><td>" + diffMin + "</td></tr>");
+                                    $("#table-data").append("<tr><td>" + value.gmc + "</td><td>" + value.description + "</td><td class='text-right'>" + value.plan + "</td><td class='text-right'>" + value.actual + "</td><td class='text-right'>" + diffPlus + "</td><td class='text-right'>" + diffMin + "</td></tr>");
 
                                     totPlan += parseInt(value.plan);
                                     totAct += parseInt(value.actual);
                                     totDiffPlus += parseInt(diffPlus);
                                     totDiffMin += parseInt(diffMin);
                                 })
+
+                                // Format the numbers
+                                console.log("formatting numbers...");
+                                totPlan = numberWithCommas(totPlan);
+                                totAct = numberWithCommas(totAct);
+                                totDiffPlus = numberWithCommas(totDiffPlus);
+                                totDiffMin = numberWithCommas(totDiffMin);
+
                                 // append the Qty total
                                 $('#table-total-plan').html(totPlan);
                                 $('#table-total-actual').html(totAct);
