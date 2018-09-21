@@ -395,7 +395,6 @@ var initiateData = function() {
             });
 
             var cData = showChart(maxWeek);
-            // renderMainChart(cData);
         }
     })
 }
@@ -405,6 +404,9 @@ var showChart = function(w) {
     // Set ACTIVE to respected nav button
     $('.nav-link').removeClass('active');
     $('#btn-nav-' + w).addClass('active');
+
+    // Save $week value in hidden input
+    $('#hidden-week').val(w);
 
     $.ajax({
         type: 'POST',

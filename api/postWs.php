@@ -9,9 +9,9 @@ if (!empty($_POST['data_type'])) {
     // ChromePhp::log($_POST['data_type']);
 
     if ($dt == "FL" || $dt == "CL" || $dt == "AS" || $dt == "TS") {
-        $query = $db->query("SELECT * FROM shipment WHERE week = {$_POST['data_week']} AND produk = 'fl' OR produk = 'cl' OR produk = 'as' OR produk = 'ts'");
+        $query = $db->query("SELECT * FROM shipment WHERE week = {$_POST['data_week']} AND (produk = 'fl' OR produk = 'cl' OR produk = 'as' OR produk = 'ts')");
     } else {
-        $query = $db->query("SELECT * FROM shipment WHERE week = {$_POST['data_week']} AND produk = 'pn' OR produk = 'rc' OR produk = 'vn'");
+        $query = $db->query("SELECT * FROM shipment WHERE week = {$_POST['data_week']} AND (produk = 'pn' OR produk = 'rc' OR produk = 'vn')");
     }
 
     if ($query->num_rows > 0) {
