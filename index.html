@@ -178,7 +178,6 @@
                     // hide WS button
                     $('#btn-ws').addClass('d-none');
 
-                    console.log(response);
                     // Function to get the latest date
                     function getLatestDate(data) {
                         var maxNumb = [];
@@ -237,8 +236,8 @@
                         dataFormat: 'json',
                         dataSource: {
                             "chart": {
-                                "caption": "Persentase Produksi Mingguan",
-                                "subCaption": "Week " + dWeek,
+                                "caption": "Persentase Produksi Mingguan: Week " + dWeek,
+                                "subCaption": "Tanggal: " + moment(dDate).format('DD MMM YYYY'),
                                 "xAxisName": "Produk",
                                 "yAxisName": "Persentase",
                                 "theme": "fusion",
