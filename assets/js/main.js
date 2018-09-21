@@ -30,7 +30,7 @@ var renderMainChart = function(data) {
         dataFormat: 'json',
         dataSource: {
             "chart": {
-                "labelDisplay": "Auto",
+                "labelDisplay": "none",
                 "yAxisName": "Perolehan",
                 "theme": "fusion",
                 "plotFillAlpha": "80",
