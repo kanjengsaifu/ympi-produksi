@@ -1,6 +1,6 @@
 // Function for number formatting
 var numberWithCommas = function(nStr) {
-  nStr += '';
+    nStr += '';
     x = nStr.split('.');
     x1 = x[0];
     x2 = x.length > 1 ? '.' + x[1] : '';
@@ -16,7 +16,7 @@ var renderMainChart = function(data) {
     // hide buttons
     $('#btn-close, #btn-ws').addClass('d-none');
 
-    // Un-hide chart #2 container
+    // Un-hide chart #2 container & reset Tabs
     $('#chart-2').removeClass('d-none');
 
     // Set marwuee text
@@ -254,11 +254,8 @@ var renderExtChart = function(data) {
     // un-hide buttons
     $('#btn-close, #btn-ws').removeClass('d-none');
 
-    // hide chart #2 container
-    $('#chart-2').addClass('d-none');
-
-    // hide chart #1 title and marquee
-    $('#title-chart-1').addClass('d-none');
+    // hide chart #2 container, chart #1 title, marquee & tabs
+    $('#chart-2, #title-chart-1, .nav').addClass('d-none');
 
     // save respected value on a hidden fields
     $('#hidden-date').val(moment(data.tanggal).format('YYYY-MM-DD'));
@@ -310,62 +307,61 @@ var renderExtChart = function(data) {
             "dataPlotClick": function(eventObj, dataObj) {
                 // Show popup ONLY for FL,CL,AS,TS products:
                 // if (dataObj.categoryLabel == 'FL' || dataObj.categoryLabel == 'CL' || dataObj.categoryLabel == 'AS' || dataObj.categoryLabel == 'TS') {
-                    // Call table data API
-                    $.ajax({
-                        type: 'POST',
-                        url: 'api/postDetail.php',
-                        dataType: "json",
-                        data: {
-                            data_type: dataObj.categoryLabel,
-                            data_date: $('#hidden-date').val()
-                        },
-                        success: function(res) {
-                            $('#modal-title').html('Data Kesesuaian: ' + dataObj.categoryLabel);
-                            $("#table-tgl").html(moment($('#hidden-date').val()).format('DD MMMM YYYY'));
+                // Call table data API
+                $.ajax({
+                    type: 'POST',
+                    url: 'api/postDetail.php',
+                    dataType: "json",
+                    data: {
+                        data_type: dataObj.categoryLabel,
+                        data_date: $('#hidden-date').val()
+                    },
+                    success: function(res) {
+                        $('#modal-title').html('Data Kesesuaian: ' + dataObj.categoryLabel);
+                        $("#table-tgl").html(moment($('#hidden-date').val()).format('DD MMMM YYYY'));
 
-                            // clear the table
-                            $("#table-data").html('');
+                        // clear the table
+                        $("#table-data").html('');
 
-                            if (res.status == 'ok') {
-                                var totPlan = 0,
-                                    totAct = 0,
-                                    totDiffPlus = 0,
-                                    totDiffMin = 0;
-                                $.each(res.result, function(key, value) {
-                                    var diff = value.actual - value.plan;
-                                    if (diff < 0) var diffMin = diff,
-                                        diffPlus = 0;
-                                    else var diffPlus = diff,
-                                        diffMin = 0;
+                        if (res.status == 'ok') {
+                            var totPlan = 0,
+                                totAct = 0,
+                                totDiffPlus = 0,
+                                totDiffMin = 0;
+                            $.each(res.result, function(key, value) {
+                                var diff = value.actual - value.plan;
+                                if (diff < 0) var diffMin = diff,
+                                    diffPlus = 0;
+                                else var diffPlus = diff,
+                                    diffMin = 0;
 
-                                    $("#table-data").append("<tr><td>" + value.gmc + "</td><td>" + value.description + "</td><td class='text-right'>" + numberWithCommas(value.plan) + "</td><td class='text-right'>" + numberWithCommas(value.actual) + "</td><td class='text-right'>" + numberWithCommas(diffPlus) + "</td><td class='text-right'>" + numberWithCommas(diffMin) + "</td></tr>");
+                                $("#table-data").append("<tr><td>" + value.gmc + "</td><td>" + value.description + "</td><td class='text-right'>" + numberWithCommas(value.plan) + "</td><td class='text-right'>" + numberWithCommas(value.actual) + "</td><td class='text-right'>" + numberWithCommas(diffPlus) + "</td><td class='text-right'>" + numberWithCommas(diffMin) + "</td></tr>");
 
-                                    totPlan += parseInt(value.plan);
-                                    totAct += parseInt(value.actual);
-                                    totDiffPlus += parseInt(diffPlus);
-                                    totDiffMin += parseInt(diffMin);
-                                })
+                                totPlan += parseInt(value.plan);
+                                totAct += parseInt(value.actual);
+                                totDiffPlus += parseInt(diffPlus);
+                                totDiffMin += parseInt(diffMin);
+                            })
 
-                                // Format the numbers
-                                console.log("formatting numbers...");
-                                totPlan = numberWithCommas(totPlan);
-                                totAct = numberWithCommas(totAct);
-                                totDiffPlus = numberWithCommas(totDiffPlus);
-                                totDiffMin = numberWithCommas(totDiffMin);
+                            // Format the numbers
+                            totPlan = numberWithCommas(totPlan);
+                            totAct = numberWithCommas(totAct);
+                            totDiffPlus = numberWithCommas(totDiffPlus);
+                            totDiffMin = numberWithCommas(totDiffMin);
 
-                                // append the Qty total
-                                $('#table-total-plan').html(totPlan);
-                                $('#table-total-actual').html(totAct);
-                                $('#table-total-diff-plus').html(totDiffPlus);
-                                $('#table-total-diff-minus').html(totDiffMin);
+                            // append the Qty total
+                            $('#table-total-plan').html(totPlan);
+                            $('#table-total-actual').html(totAct);
+                            $('#table-total-diff-plus').html(totDiffPlus);
+                            $('#table-total-diff-minus').html(totDiffMin);
 
-                                // Show the MODAL
-                                $('#modal').modal('show');
-                            } else {
-                                $('#modal-error').modal('show');
-                            }
+                            // Show the MODAL
+                            $('#modal').modal('show');
+                        } else {
+                            $('#modal-error').modal('show');
                         }
-                    })
+                    }
+                })
                 // }
             }
         }
@@ -375,16 +371,48 @@ var renderExtChart = function(data) {
 // Call API for Main Chart Fn
 var initiateData = function() {
     // reset components this.state
-    $('.marquee, #title-chart-1').removeClass('d-none');
+    $('.marquee, #title-chart-1, .nav').removeClass('d-none');
 
     // reset all Charts states
-    console.log("Resetting charts...");
-    $('#chart-container-1, #chart-container-2').html();
+    $('#chart-container-1, #chart-container-2, #tab-chart-1').html('');
 
+    // Get WEEKS first
     $.ajax({
         type: 'GET',
+        url: 'api/getWeek.php',
+        dataType: "json",
+        success: function(response) {
+            var res = response.result;
+            $('#tab-chart-1').html();
+
+            // Find the latest week
+            var maxWeek = 0;
+            res.map(function(obj) {
+                if (obj.week > maxWeek) maxWeek = obj.week;
+
+                // render tab's header based on week
+                $('#tab-chart-1').append('<li class="nav-item"><a class="btn nav-link" onclick="showChart(' + obj.week + ')" id="btn-nav-' + obj.week + '" href="#">Week ' + obj.week + '</a></li>');
+            });
+
+            var cData = showChart(maxWeek);
+            // renderMainChart(cData);
+        }
+    })
+}
+
+// Function to call Chart's data
+var showChart = function(w) {
+    // Set ACTIVE to respected nav button
+    $('.nav-link').removeClass('active');
+    $('#btn-nav-' + w).addClass('active');
+
+    $.ajax({
+        type: 'POST',
         url: 'api/getData.php',
         dataType: "json",
+        data: {
+            week: w
+        },
         success: function(response) {
             var finalData = {},
                 dataCategories = [],
@@ -439,7 +467,6 @@ var initiateData = function() {
                 "actual_2": dataActual2
             };
 
-            // Render main chart
             renderMainChart(finalData);
         }
     });
