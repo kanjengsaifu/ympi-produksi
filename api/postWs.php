@@ -10,7 +10,7 @@ if (!empty($_POST['data_type'])) {
         $query_string = "SELECT * FROM shipment WHERE week = {$_POST['data_week']} AND tanggal = '{$_POST['data_date']}' AND (produk = 'fl' OR produk = 'cl' OR produk = 'as' OR produk = 'ts')";
         $query = $db->query($query_string);
     } else {
-        $query_string = "SELECT * FROM shipment WHERE week = {$_POST['data_week']}  AND tanggal = {$_POST['data_date']} AND (produk = 'pn' OR produk = 'rc' OR produk = 'vn')";
+        $query_string = "SELECT * FROM shipment WHERE week = {$_POST['data_week']}  AND tanggal = '{$_POST['data_date']}' AND (produk = 'pn' OR produk = 'rc' OR produk = 'vn')";
         $query = $db->query($query_string);
     }
 
