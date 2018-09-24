@@ -166,6 +166,7 @@ var renderMainChart = function(data) {
                 "divLineGapLen": "1",
                 "showValues": "1",
                 "valueFontSize": "15"
+
             },
             "categories": [{
                 "category": data.categories
