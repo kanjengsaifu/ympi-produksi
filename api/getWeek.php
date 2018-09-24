@@ -1,7 +1,7 @@
 <?php
 include "conn.php";
 
-$query = $db->query("SELECT * FROM perolehan WHERE week = '{$_POST['week']}'");
+$query = $db->query("SELECT week FROM perolehan GROUP BY week ORDER BY week");
 $rows = array();
 
 if ($query->num_rows > 0) {
@@ -9,7 +9,6 @@ if ($query->num_rows > 0) {
         $rows[] = $r;
     }
     $data['status'] = 'ok';
-    $data['week'] = $rows[0]['week'];
     $data['result'] = $rows;
 } else {
     $data['status'] = 'err';

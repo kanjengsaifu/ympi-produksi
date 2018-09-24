@@ -6,13 +6,15 @@ if (!empty($_POST['data_type'])) {
     $dt = $_POST['data_type'];
     $rows = array();
 
-    // ChromePhp::log($_POST['data_type']);
-
     if ($dt == "FL" || $dt == "CL" || $dt == "AS" || $dt == "TS") {
-        $query = $db->query("SELECT * FROM shipment WHERE week = {$_POST['data_week']} AND produk = 'fl' OR produk = 'cl' OR produk = 'as' OR produk = 'ts'");
+        $query_string = "SELECT * FROM shipment WHERE week = {$_POST['data_week']} AND tanggal = '{$_POST['data_date']}' AND (produk = 'fl' OR produk = 'cl' OR produk = 'as' OR produk = 'ts')";
+        $query = $db->query($query_string);
     } else {
-        $query = $db->query("SELECT * FROM shipment WHERE week = {$_POST['data_week']} AND produk = 'pn' OR produk = 'rc' OR produk = 'vn'");
+        $query_string = "SELECT * FROM shipment WHERE week = {$_POST['data_week']}  AND tanggal = '{$_POST['data_date']}' AND (produk = 'pn' OR produk = 'rc' OR produk = 'vn')";
+        $query = $db->query($query_string);
     }
+
+    // ChromePhp::log($query);
 
     if ($query->num_rows > 0) {
         while ($r = mysqli_fetch_assoc($query)) {
