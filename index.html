@@ -54,17 +54,17 @@
     </style>
 </head>
 
-<body>           
+<body>
     <div class="container h-100">
         <div class="row h-100 justify-content-center align-items-center">
             <div class="col-12">
                 <div class="text-center">
-                    <h5>Daily Production 日次生産 (Band Instrument)</h5>
+                    <h5 id="chart-title-1">Chart #1 title will be here</h5>
                     <!-- <h5 id="title-chart-1">Persentase Pencapaian Produksi Harian BI (Sep-18)</h5> -->
                     <!-- <div class="pt-1 pb-1 marquee"> -->
-                        <!-- <marquee> -->
-                        <!-- <span style="font-family: Impact; font-size: 18pt" id="marquee-text">... Gatsu ... made no, seisan no kekka wo houkoku shimasu . Diinformasikan hasil produksi sampai tanggal ...</span> -->
-                        <!-- </marquee> -->
+                    <!-- <marquee> -->
+                    <!-- <span style="font-family: Impact; font-size: 18pt" id="marquee-text">... Gatsu ... made no, seisan no kekka wo houkoku shimasu . Diinformasikan hasil produksi sampai tanggal ...</span> -->
+                    <!-- </marquee> -->
                     <!-- </div> -->
                 </div>
                 <!-- Tabs for CHART #1 -->
@@ -75,15 +75,14 @@
                     <button id="btn-ws" class="btn btn-success d-none">Weekly Shipment <i class="fas fa-arrow-right"></i></button>
                 </div>
             </div>
-
             <div class="col-12 d-none" id="chart-2">
                 <div class="text-center">
-                    <h5>Daily Production 日次生産 (Educational Instrument)</h5>
+                    <h5 id="chart-title-2">Chart #2 title will be here</h5>
                     <!-- <h5 id="title-chart-2">Persentase Pencapaian Produksi Harian EI (Sep-18)</h5> -->
                     <!-- <div class="pt-1 pb-1 marquee"> -->
-                        <!-- <marquee> -->
-                        <!-- <span style="font-family: Impact; font-size: 18pt">... Gatsu ... made no, seisan no kekka wo houkoku shimasu . Diinformasikan hasil produksi sampai tanggal ...</span> -->
-                        <!-- </marquee> -->
+                    <!-- <marquee> -->
+                    <!-- <span style="font-family: Impact; font-size: 18pt">... Gatsu ... made no, seisan no kekka wo houkoku shimasu . Diinformasikan hasil produksi sampai tanggal ...</span> -->
+                    <!-- </marquee> -->
                     <!-- </div> -->
                 </div>
                 <div id="chart-container-2" class="text-center">Chart #2 will load here!</div>
@@ -169,6 +168,9 @@
             var dDate = $('#hidden-date').val();
             var dWeek = $('#hidden-week').val();
 
+            // Set chart title
+            $('#chart-title-1').html('Weekly Shipping Chart (週次出荷コンテナー別) - ETD YEMI based (工場出荷日の基準)');
+
             $.ajax({
                 type: 'POST',
                 url: 'api/postWs.php',
@@ -182,7 +184,6 @@
                     // hide WS button
                     $('#btn-ws').addClass('d-none');
 
-                    console.log(response);
                     // Function to get the latest date
                     function getLatestDate(data) {
                         var maxNumb = [];
@@ -220,18 +221,18 @@
                         });
 
                         filteredData.forEach(function(y) {
-                            tempPlan.push({ "value": y.target_persentase-y.persentase_shipment });
+                            tempPlan.push({ "value": y.target_persentase - y.persentase_shipment });
                             tempAct.push({ "value": y.persentase_shipment });
                         })
                     });
 
                     dataSet = [{
                         "seriesname": "Completed",
-                        "color":"8A2BE2",
+                        "color": "8A2BE2",
                         "data": tempAct
                     }, {
                         "seriesname": "In_Progress",
-                        "color":"F0E68C",
+                        "color": "F0E68C",
                         "data": tempPlan
                     }];
 

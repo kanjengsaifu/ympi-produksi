@@ -19,8 +19,9 @@ var renderMainChart = function(data) {
     // Un-hide chart #2 container & reset Tabs
     $('#chart-2').removeClass('d-none');
 
-    // Set marwuee text
-    // $('#marquee-text').html('... Gatsu ... made no, seisan no kekka wo houkoku shimasu . Diinformasikan hasil produksi sampai tanggal ...');
+    // Set chart title
+    $('#chart-title-1').html('Daily Production 日次生産 (Band Instrument)');
+    $('#chart-title-2').html('Daily Production 日次生産 (Educational Instrument)');
 
     // Chart #1
     $('#chart-container-1').insertFusionCharts({
@@ -51,12 +52,12 @@ var renderMainChart = function(data) {
             }],
             "dataset": [{
                     "seriesname": "Actual",
-                    "color":"8A2BE2",
+                    "color": "8A2BE2",
                     "data": data.plan
                 },
                 {
                     "seriesname": "Minus",
-                    "color":"F0E68C",
+                    "color": "F0E68C",
                     "data": data.actual
                 }
             ]
@@ -177,12 +178,12 @@ var renderMainChart = function(data) {
             }],
             "dataset": [{
                     "seriesname": "Actual",
-                    "color":"8A2BE2",
+                    "color": "8A2BE2",
                     "data": data.plan_2
                 },
                 {
                     "seriesname": "Minus",
-                    "color":"F0E68C",
+                    "color": "F0E68C",
                     "data": data.actual_2
                 }
             ]
@@ -271,6 +272,10 @@ var renderExtChart = function(data) {
     // hide chart #2 container, chart #1 title, marquee & tabs
     $('#chart-2, #title-chart-1, .nav').addClass('d-none');
 
+    // Set chart title
+    if (data.categories[0]['label'] == 'FL') $('#chart-title-1').html('Daily Production 日次生産 (Band Instrument)');
+    else $('#chart-title-1').html('Daily Production 日次生産 (Educational Instrument)');
+
     // save respected value on a hidden fields
     $('#hidden-date').val(moment(data.tanggal).format('YYYY-MM-DD'));
     $('#hidden-type').val(data.categories[0].label);
@@ -313,12 +318,12 @@ var renderExtChart = function(data) {
             }],
             "dataset": [{
                     "seriesname": "Surplus",
-                    "color":"8A2BE2",
+                    "color": "8A2BE2",
                     "data": data.surplus
                 },
                 {
                     "seriesname": "Minus",
-                    "color":"F0E68C",
+                    "color": "F0E68C",
                     "data": data.minus
                 }
             ]
@@ -460,7 +465,7 @@ var showChart = function(w) {
                     dataCategories.push(dataTgl);
 
                     var dtAct = {
-                        "value": (data.flPlan-data.flAct) + (data.clPlan-data.clAct) + (data.asPlan-data.asAct) + (data.tsPlan-data.tsAct)
+                        "value": (data.flPlan - data.flAct) + (data.clPlan - data.clAct) + (data.asPlan - data.asAct) + (data.tsPlan - data.tsAct)
                     }
                     dataActual.push(dtAct);
 
@@ -470,7 +475,7 @@ var showChart = function(w) {
                     dataPlan.push(dtPlan);
 
                     var dtAct2 = {
-                        "value": (data.pnPlan-data.pnAct) + (data.rcPlan-data.rcAct) + (data.vnPlan-data.vnAct)
+                        "value": (data.pnPlan - data.pnAct) + (data.rcPlan - data.rcAct) + (data.vnPlan - data.vnAct)
                     }
                     dataActual2.push(dtAct2);
 
