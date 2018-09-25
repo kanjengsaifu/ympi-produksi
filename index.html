@@ -16,6 +16,7 @@
     <script src="assets/js/fusioncharts.theme.fusion.js"></script>
     <!-- Moment.js -->
     <script src="assets/js/moment.min.js"></script>
+    <meta charset="utf-8" />
     <style type="text/css" media="screen">
     @keyframes marquee {
         0% {
@@ -53,13 +54,13 @@
     </style>
 </head>
 
-<body>
-
+<body>           
     <div class="container h-100">
         <div class="row h-100 justify-content-center align-items-center">
             <div class="col-12">
                 <div class="text-center">
-                    <h5 id="title-chart-1">Akumulasi Produksi BI (Sep-18)</h5>
+                    <h5>Daily Production 日次生産 (Band Instrument)</h5>
+                    <!-- <h5 id="title-chart-1">Persentase Pencapaian Produksi Harian BI (Sep-18)</h5> -->
                     <!-- <div class="pt-1 pb-1 marquee"> -->
                         <!-- <marquee> -->
                         <!-- <span style="font-family: Impact; font-size: 18pt" id="marquee-text">... Gatsu ... made no, seisan no kekka wo houkoku shimasu . Diinformasikan hasil produksi sampai tanggal ...</span> -->
@@ -67,7 +68,6 @@
                     <!-- </div> -->
                 </div>
                 <!-- Tabs for CHART #1 -->
-
                 <ul class="nav nav-pills pt-3" id="tab-chart-1"></ul>
                 <div id="chart-container-1" class="text-center tab-content pt-2">Chart #1 will load here!</div>
                 <div class="text-right">
@@ -75,9 +75,11 @@
                     <button id="btn-ws" class="btn btn-success d-none">Weekly Shipment <i class="fas fa-arrow-right"></i></button>
                 </div>
             </div>
+
             <div class="col-12 d-none" id="chart-2">
                 <div class="text-center">
-                    <h5 id="title-chart-2">Akumulasi Produksi EI (Sep-18)</h5>
+                    <h5>Daily Production 日次生産 (Educational Instrument)</h5>
+                    <!-- <h5 id="title-chart-2">Persentase Pencapaian Produksi Harian EI (Sep-18)</h5> -->
                     <!-- <div class="pt-1 pb-1 marquee"> -->
                         <!-- <marquee> -->
                         <!-- <span style="font-family: Impact; font-size: 18pt">... Gatsu ... made no, seisan no kekka wo houkoku shimasu . Diinformasikan hasil produksi sampai tanggal ...</span> -->
@@ -180,6 +182,7 @@
                     // hide WS button
                     $('#btn-ws').addClass('d-none');
 
+                    console.log(response);
                     // Function to get the latest date
                     function getLatestDate(data) {
                         var maxNumb = [];
@@ -200,7 +203,7 @@
 
                     // Generate marquees
                     if (sortedData.length > 3) {
-                        $('#marquee-text').html('bla bla');
+                        $('#text').html('YMPI');
                     } else {
                         $('#marquee-text').html('bla bla');
                     }
@@ -217,41 +220,50 @@
                         });
 
                         filteredData.forEach(function(y) {
-                            tempPlan.push({ "value": (y.target_persentase-y.persentase_shipment) });
+                            tempPlan.push({ "value": y.target_persentase-y.persentase_shipment });
                             tempAct.push({ "value": y.persentase_shipment });
                         })
                     });
 
                     dataSet = [{
-                        "seriesname": "Plan",
-                        "data": tempPlan
-                    }, {
-                        "seriesname": "Actual",
+                        "seriesname": "Completed",
+                        "color":"8A2BE2",
                         "data": tempAct
+                    }, {
+                        "seriesname": "In_Progress",
+                        "color":"F0E68C",
+                        "data": tempPlan
                     }];
 
                     // Render WS chart
                     $('#chart-container-1').insertFusionCharts({
                         type: 'scrollstackedcolumn2d',
-                        width: 1024,
+                        width: 1200,
                         height: 600,
                         dataFormat: 'json',
                         dataSource: {
                             "chart": {
-                                "caption": "Persentase Produksi Mingguan: Week " + dWeek,
-                                "subCaption": "Tanggal: " + moment(dDate).format('DD MMM YYYY'),
+                                "caption": "Weekly Shipping Chart (週次出荷コンテナー別) - ETD YMPI based (工場出荷日の基準)",
+                                "captionFontSize": "25",
+                                "subCaption": "Week " + dWeek,
+                                "subcaptionFontSize": "20",
+                                "baseFont": "Meiryo",
+                                // "baseFontSize": "15",
                                 "xAxisName": "Produk",
-                                "yAxisName": "Persentase",
+                                "yAxisName": "Total Completion",
                                 "theme": "fusion",
                                 "stack100percent": "1",
                                 "decimals": "1",
                                 "plotFillAlpha": "80",
                                 "divLineIsDashed": "1",
                                 "divLineDashLen": "1",
-                                "divLineGapLen": "1",
+                                "divLineGapLen": "5",
                                 "showValues": "1",
                                 "valueFontSize": "15",
+                                "valueFontBold": "1",
                                 "numberSuffix": "%",
+                                "bgColor": "#DDDDDD",
+                                "bgAlpha": "50",
                                 "id": 'main-chart'
                             },
                             "categories": [{

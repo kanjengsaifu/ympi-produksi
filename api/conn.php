@@ -1,8 +1,8 @@
 <?php
 //database details
 $dbHost = 'localhost';
-$dbUsername = 'ympi';
-$dbPassword = 'Hello123#';
+$dbUsername = 'root';
+$dbPassword = '';
 $dbName = 'ympi-produksi';
 
 //create connection and select DB

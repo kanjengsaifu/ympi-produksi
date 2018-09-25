@@ -31,16 +31,17 @@ var renderMainChart = function(data) {
         dataSource: {
             "chart": {
                 "labelDisplay": "none",
-                "yAxisName": "Perolehan",
+                "yAxisName": "Pencapaian",
                 "theme": "fusion",
                 "stack100percent": "1",
                 "decimals": "1",
                 "plotFillAlpha": "80",
                 "divLineIsDashed": "1",
-                "divLineDashLen": "1",
-                "divLineGapLen": "1",
+                "divLineDashLen": "5",
+                "divLineGapLen": "5",
                 "showValues": "1",
                 "valueFontSize": "15",
+                "valueFontBold": "1",
                 "bgColor": "#DDDDDD",
                 "bgAlpha": "50",
                 "id": 'main-chart'
@@ -50,11 +51,12 @@ var renderMainChart = function(data) {
             }],
             "dataset": [{
                     "seriesname": "Actual",
+                    "color":"8A2BE2",
                     "data": data.plan
                 },
                 {
                     "seriesname": "Minus",
-                    "color": "FFE4B5",
+                    "color":"F0E68C",
                     "data": data.actual
                 }
             ]
@@ -156,7 +158,7 @@ var renderMainChart = function(data) {
         dataFormat: 'json',
         dataSource: {
             "chart": {
-                "yAxisName": "Perolehan",
+                "yAxisName": "Pencapaian",
                 "theme": "fusion",
                 "stack100percent": "1",
                 "decimals": "1",
@@ -165,19 +167,22 @@ var renderMainChart = function(data) {
                 "divLineDashLen": "1",
                 "divLineGapLen": "1",
                 "showValues": "1",
+                "valueFontBold": "1",
+                "bgColor": "#DDDDDD",
+                "bgAlpha": "50",
                 "valueFontSize": "15"
-
             },
             "categories": [{
                 "category": data.categories
             }],
             "dataset": [{
                     "seriesname": "Actual",
+                    "color":"8A2BE2",
                     "data": data.plan_2
                 },
                 {
                     "seriesname": "Minus",
-                    "color": "C0C0C0",
+                    "color":"F0E68C",
                     "data": data.actual_2
                 }
             ]
@@ -270,23 +275,24 @@ var renderExtChart = function(data) {
     $('#hidden-date').val(moment(data.tanggal).format('YYYY-MM-DD'));
     $('#hidden-type').val(data.categories[0].label);
 
-    if (data.categories.length == 3) {
-        // Marque for PN,RC,VN products
-        // $('#marquee-text').html('Aitemu goto no seisan no kekka wa. Hasil kesesuaian per item sebagai berikut: KBI kara case pianica no okure ga arimasu kara, pianica wa mainasu Hap Hyaku roku juu setto desu. Karena ada keterlambatan case Pianica dari KBI, Pianica minus 860 set. Rikooda to Venova no aitemu go to no okure wa arimasen. Tidak ada keterlambatan per item untuk produk Recorder dan Venova');
+    // if (data.categories.length == 3) {
+    //     // Marque for PN,RC,VN products
+    //     $('#marquee-text').html('Aitemu goto no seisan no kekka wa. Hasil kesesuaian per item sebagai berikut: KBI kara case pianica no okure ga arimasu kara, pianica wa mainasu Hap Hyaku roku juu setto desu. Karena ada keterlambatan case Pianica dari KBI, Pianica minus 860 set. Rikooda to Venova no aitemu go to no okure wa arimasen. Tidak ada keterlambatan per item untuk produk Recorder dan Venova');
     // } else {
-        // Marque for FL,CL,AS,TS products
-        // $('#marquee-text').html('Aitemu goto no seisan no kekka wa. Hasil kesesuaian per item sebagai berikut: Furuto wa mainasu Ni Juu Go setto, purasu Ni Juu Go setto desu. FL minus 25 set, plus 25 set. Kurarinetto wa mainasu Juu setto, purasu Juu setto desu. Aruto sakkusu wa mainasu Ni Juu setto, purasu Ni Juu setto desu. Sax Alto minus 20 set, plus 20 set. Tena Sakkusu wa mainasu Go setto. Purasu Go setto desu. Sax Tenor minus 5 set, plus 5 set');
-    }
+    //     // Marque for FL,CL,AS,TS products
+    //     $('#marquee-text').html('Aitemu goto no seisan no kekka wa. Hasil kesesuaian per item sebagai berikut: Furuto wa mainasu Ni Juu Go setto, purasu Ni Juu Go setto desu. FL minus 25 set, plus 25 set. Kurarinetto wa mainasu Juu setto, purasu Juu setto desu. Aruto sakkusu wa mainasu Ni Juu setto, purasu Ni Juu setto desu. Sax Alto minus 20 set, plus 20 set. Tena Sakkusu wa mainasu Go setto. Purasu Go setto desu. Sax Tenor minus 5 set, plus 5 set');
+    // }
 
     // main action
     $('#chart-container-1').insertFusionCharts({
         type: 'mscolumn2d',
-        width: 1024,
+        width: 1103,
         height: 600,
         dataFormat: 'json',
         dataSource: {
             "chart": {
-                "caption": "Kesesuaian Produksi",
+                "caption": "Kesesuaian Per Item 部品ごとの適合性",
+                "captionFontSize": "25",
                 "subCaption": "Tanggal " + moment(data.tanggal).format('DD MMMM YYYY'),
                 // "xAxisName": "Produk",
                 "yAxisName": "Perolehan",
@@ -297,6 +303,9 @@ var renderExtChart = function(data) {
                 "divLineGapLen": "1",
                 "showValues": "1",
                 "valueFontSize": "15",
+                "valueFontBold": "1",
+                "bgColor": "#DDDDDD",
+                "bgAlpha": "50",
                 "id": 'main-chart'
             },
             "categories": [{
@@ -304,10 +313,12 @@ var renderExtChart = function(data) {
             }],
             "dataset": [{
                     "seriesname": "Surplus",
+                    "color":"8A2BE2",
                     "data": data.surplus
                 },
                 {
                     "seriesname": "Minus",
+                    "color":"F0E68C",
                     "data": data.minus
                 }
             ]
@@ -440,6 +451,7 @@ var showChart = function(w) {
                 // call teh SortData Fn
                 var rawData = sortData(rawObj);
 
+                // Populating for chart
                 // Populating for chart
                 rawData.forEach(function(data) {
                     var dataTgl = {
