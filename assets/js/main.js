@@ -15,6 +15,7 @@ var numberWithCommas = function(nStr) {
 var renderMainChart = function(data) {
     // hide buttons
     $('#btn-close, #btn-ws').addClass('d-none');
+    $('#open-ws-1').removeClass('d-none');
 
     // Un-hide chart #2 container & reset Tabs
     $('#chart-2').removeClass('d-none');
@@ -268,13 +269,13 @@ var renderMainChart = function(data) {
 var renderExtChart = function(data) {
     // un-hide buttons
     $('#btn-close, #btn-ws').removeClass('d-none');
+    $('#open-ws-1').addClass('d-none');
 
     // hide chart #2 container, chart #1 title, marquee & tabs
     $('#chart-2, #title-chart-1, .nav').addClass('d-none');
 
     // Set chart title
-    if (data.categories[0]['label'] == 'FL') $('#chart-title-1').html('Daily Production 日次生産 (Band Instrument)');
-    else $('#chart-title-1').html('Daily Production 日次生産 (Educational Instrument)');
+    $('#chart-title-1').addClass('d-none');
 
     // save respected value on a hidden fields
     $('#hidden-date').val(moment(data.tanggal).format('YYYY-MM-DD'));
@@ -416,7 +417,7 @@ var initiateData = function() {
                 if (obj.week > maxWeek) maxWeek = obj.week;
 
                 // render tab's header based on week
-                $('#tab-chart-1').append('<li class="nav-item"><a class="btn nav-link" onclick="showChart(' + obj.week + ')" id="btn-nav-' + obj.week + '" href="#">Week ' + obj.week + '</a></li>');
+                $('.nav').append('<li class="nav-item"><a class="btn nav-link" onclick="showChart(' + obj.week + ')" id="btn-nav-' + obj.week + '" href="#">Week ' + obj.week + '</a></li>');
             });
 
             var cData = showChart(maxWeek);

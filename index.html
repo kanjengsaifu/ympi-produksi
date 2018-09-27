@@ -56,8 +56,15 @@
 
 <body>
     <div class="container h-100">
-        <div class="row h-100 justify-content-center align-items-center">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-12 fluid">
+                <!-- Tabs for CHART #1 -->
+                <ul class="nav nav-pills pt-3" id="tab-chart-1"></ul>
+            </div>
+        </div>
+        <div class="row justify-content-center align-items-center pt-5">
             <div class="col-12">
+                <a class="btn btn-default float-right" id="open-ws-1">Weekly Shipment <i class="fa fa-arrow-right"></i></a>
                 <div class="text-center">
                     <h5 id="chart-title-1">Chart #1 title will be here</h5>
                     <!-- <h5 id="title-chart-1">Persentase Pencapaian Produksi Harian BI (Sep-18)</h5> -->
@@ -67,15 +74,14 @@
                     <!-- </marquee> -->
                     <!-- </div> -->
                 </div>
-                <!-- Tabs for CHART #1 -->
-                <ul class="nav nav-pills pt-3" id="tab-chart-1"></ul>
                 <div id="chart-container-1" class="text-center tab-content pt-2">Chart #1 will load here!</div>
-                <div class="text-right">
+                <div class="text-right pt-3">
                     <button id="btn-close" class='btn btn-danger d-none'><i class="fas fa-arrow-left"></i> Kembali</button>
                     <button id="btn-ws" class="btn btn-success d-none">Weekly Shipment <i class="fas fa-arrow-right"></i></button>
                 </div>
             </div>
-            <div class="col-12 d-none" id="chart-2">
+            <div class="col-12 d-none pt-3" id="chart-2">
+                <a class="btn btn-default float-right" id="open-ws-2">Weekly Shipment <i class="fa fa-arrow-right"></i></a>
                 <div class="text-center">
                     <h5 id="chart-title-2">Chart #2 title will be here</h5>
                     <!-- <h5 id="title-chart-2">Persentase Pencapaian Produksi Harian EI (Sep-18)</h5> -->
@@ -235,6 +241,260 @@
                         "color": "F0E68C",
                         "data": tempPlan
                     }];
+
+                    // Render WS chart
+                    $('#chart-container-1').insertFusionCharts({
+                        type: 'scrollstackedcolumn2d',
+                        width: 1200,
+                        height: 600,
+                        dataFormat: 'json',
+                        dataSource: {
+                            "chart": {
+                                "caption": "Weekly Shipping Chart (週次出荷コンテナー別) - ETD YMPI based (工場出荷日の基準)",
+                                "captionFontSize": "25",
+                                "subCaption": "Week " + dWeek,
+                                "subcaptionFontSize": "20",
+                                "baseFont": "Meiryo",
+                                // "baseFontSize": "15",
+                                "xAxisName": "Produk",
+                                "yAxisName": "Total Completion",
+                                "theme": "fusion",
+                                "stack100percent": "1",
+                                "decimals": "1",
+                                "plotFillAlpha": "80",
+                                "divLineIsDashed": "1",
+                                "divLineDashLen": "1",
+                                "divLineGapLen": "5",
+                                "showValues": "1",
+                                "valueFontSize": "15",
+                                "valueFontBold": "1",
+                                "numberSuffix": "%",
+                                "bgColor": "#DDDDDD",
+                                "bgAlpha": "50",
+                                "id": 'main-chart'
+                            },
+                            "categories": [{
+                                "category": dataCat
+                            }],
+                            "dataset": dataSet
+                        }
+                    });
+                },
+                error: function(err) {
+                    alert(JSON.stringify(err));
+                }
+            })
+        });
+
+        // Button WS Chart 1
+        $('#open-ws-1').click(function() {
+            var dWeek = $('#hidden-week').val();
+
+            // Unset chart title
+            $('#chart-title-1').addClass('d-none');
+
+            // Hide chart #2
+            $('#chart-2').addClass('d-none');
+
+            // hide tabs
+            $('.nav').addClass('d-none');
+
+            // hide/show related button
+            $('#btn-close').removeClass('d-none');
+
+            $.ajax({
+                type: 'POST',
+                url: 'api/postWsIndex.php',
+                dataType: "json",
+                data: {
+                    data_type: "FL",
+                    data_week: dWeek
+                },
+                success: function(response) {
+                    console.log(response);
+                    // hide WS button
+                    $('#open-ws-1').addClass('d-none');
+
+                    // Function to get the latest date
+                    function getLatestDate(data) {
+                        var maxNumb = [];
+                        for (var y = 0; y < data.data.length; y++) {
+                            maxNumb.push(new Date(data.data[y].tanggal));
+                        }
+                        var latestDate = moment(new Date(Math.max.apply(null, maxNumb))).format('YYYY-MM-DD');
+                        return latestDate;
+                    }
+
+                    // Populate dataset
+                    var dataSet = [],
+                        dataCat = [],
+                        tempPlan = [],
+                        tempAct = [];
+                    var rawData = response.result;
+                    var sortedData = sortWsData(rawData);
+
+                    // Generate marquees
+                    if (sortedData.length > 3) {
+                        $('#text').html('YMPI');
+                    } else {
+                        $('#marquee-text').html('bla bla');
+                    }
+
+                    sortedData.forEach(function(dt) {
+                        dataCat.push({
+                            "label": dt.produk.toUpperCase()
+                        });
+
+                        var filteredData = [];
+                        var theDate = getLatestDate(dt);
+                        dt.data.forEach(function(x) {
+                            if (x.tanggal == theDate) filteredData.push(x);
+                        });
+
+                        filteredData.forEach(function(y) {
+                            tempPlan.push({ "value": y.target_persentase - y.persentase_shipment });
+                            tempAct.push({ "value": y.persentase_shipment });
+                        })
+                    });
+
+                    dataSet = [{
+                        "seriesname": "Completed",
+                        "color": "8A2BE2",
+                        "data": tempAct
+                    }, {
+                        "seriesname": "In_Progress",
+                        "color": "F0E68C",
+                        "data": tempPlan
+                    }];
+
+                    console.log(dataSet);
+
+                    // Render WS chart
+                    $('#chart-container-1').insertFusionCharts({
+                        type: 'scrollstackedcolumn2d',
+                        width: 1200,
+                        height: 600,
+                        dataFormat: 'json',
+                        dataSource: {
+                            "chart": {
+                                "caption": "Weekly Shipping Chart (週次出荷コンテナー別) - ETD YMPI based (工場出荷日の基準)",
+                                "captionFontSize": "25",
+                                "subCaption": "Week " + dWeek,
+                                "subcaptionFontSize": "20",
+                                "baseFont": "Meiryo",
+                                // "baseFontSize": "15",
+                                "xAxisName": "Produk",
+                                "yAxisName": "Total Completion",
+                                "theme": "fusion",
+                                "stack100percent": "1",
+                                "decimals": "1",
+                                "plotFillAlpha": "80",
+                                "divLineIsDashed": "1",
+                                "divLineDashLen": "1",
+                                "divLineGapLen": "5",
+                                "showValues": "1",
+                                "valueFontSize": "15",
+                                "valueFontBold": "1",
+                                "numberSuffix": "%",
+                                "bgColor": "#DDDDDD",
+                                "bgAlpha": "50",
+                                "id": 'main-chart'
+                            },
+                            "categories": [{
+                                "category": dataCat
+                            }],
+                            "dataset": dataSet
+                        }
+                    });
+                },
+                error: function(err) {
+                    alert(JSON.stringify(err));
+                }
+            })
+        });
+
+        // Button WS Chart 1
+        $('#open-ws-2').click(function() {
+            var dWeek = $('#hidden-week').val();
+
+            // Unset chart title
+            $('#chart-title-1').addClass('d-none');
+
+            // Hide chart #2
+            $('#chart-2').addClass('d-none');
+
+            // hide tabs
+            $('.nav').addClass('d-none');
+
+            // hide/show related button
+            $('#btn-close').removeClass('d-none');
+
+            $.ajax({
+                type: 'POST',
+                url: 'api/postWsIndex.php',
+                dataType: "json",
+                data: {
+                    data_type: "PN",
+                    data_week: dWeek
+                },
+                success: function(response) {
+                    console.log(response);
+                    // hide WS button
+                    $('#open-ws-1').addClass('d-none');
+
+                    // Function to get the latest date
+                    function getLatestDate(data) {
+                        var maxNumb = [];
+                        for (var y = 0; y < data.data.length; y++) {
+                            maxNumb.push(new Date(data.data[y].tanggal));
+                        }
+                        var latestDate = moment(new Date(Math.max.apply(null, maxNumb))).format('YYYY-MM-DD');
+                        return latestDate;
+                    }
+
+                    // Populate dataset
+                    var dataSet = [],
+                        dataCat = [],
+                        tempPlan = [],
+                        tempAct = [];
+                    var rawData = response.result;
+                    var sortedData = sortWsData(rawData);
+
+                    // Generate marquees
+                    if (sortedData.length > 3) {
+                        $('#text').html('YMPI');
+                    } else {
+                        $('#marquee-text').html('bla bla');
+                    }
+
+                    sortedData.forEach(function(dt) {
+                        dataCat.push({
+                            "label": dt.produk.toUpperCase()
+                        });
+
+                        var filteredData = [];
+                        var theDate = getLatestDate(dt);
+                        dt.data.forEach(function(x) {
+                            if (x.tanggal == theDate) filteredData.push(x);
+                        });
+
+                        filteredData.forEach(function(y) {
+                            tempPlan.push({ "value": y.target_persentase - y.persentase_shipment });
+                            tempAct.push({ "value": y.persentase_shipment });
+                        })
+                    });
+
+                    dataSet = [{
+                        "seriesname": "Completed",
+                        "color": "8A2BE2",
+                        "data": tempAct
+                    }, {
+                        "seriesname": "In_Progress",
+                        "color": "F0E68C",
+                        "data": tempPlan
+                    }];
+
+                    console.log(dataSet);
 
                     // Render WS chart
                     $('#chart-container-1').insertFusionCharts({
