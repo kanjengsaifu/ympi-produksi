@@ -610,3 +610,27 @@ var sortWsData = function(rawObj) {
 
     return groups;
 }
+
+// Sort Data Fn (for WS chart)
+var sortWsDataIndex = function(rawObj) {
+    var group_to_values = rawObj.reduce(function(obj, item) {
+        obj[item.tipe_produk] = obj[item.tipe_produk] || [];
+        obj[item.tipe_produk].push({
+            tipe_produk: item.tipe_produk,
+            gmc: item.gmc,
+            description: item.description,
+            plan: item.plan,
+            actual: item.actual
+        });
+        return obj;
+    }, {});
+
+    var groups = Object.keys(group_to_values).map(function(key) {
+        return {
+            tipe_produk: key,
+            data: group_to_values[key]
+        };
+    });
+
+    return groups;
+}

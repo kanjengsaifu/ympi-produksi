@@ -135,6 +135,45 @@
                 </div>
             </div>
         </div>
+        <!-- Modal WS -->
+        <div id="modal-ws" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="modal-title">
+                            <h4 id="modal-ws-title">Modal header will be here</h4>
+                            <small><span id="table-ws-tgl"></span></small>
+                        </div>
+                    </div>
+                    <div class="modal-body" id="modal-ws-content">
+                        <table class="table table-ws-sm">
+                            <thead>
+                                <tr>
+                                    <th scope="col">GMC</th>
+                                    <th scope="col">Desc</th>
+                                    <th scope="col">Plan</th>
+                                    <th scope="col">Actual</th>
+                                    <th scope="col">Diff</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-ws-data"></tbody>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="2">Total</th>
+                                    <th id="table-ws-total-plan" class='text-right'></th>
+                                    <th id="table-ws-total-actual" class='text-right'></th>
+                                    <th id="table-ws-total-diff" class='text-right'></th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <div class="text-right pt-3">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fas fa-times"></i> Tutup</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- Error Modal -->
         <div id="modal-error" class="modal fade" role="dialog">
             <div class="modal-dialog modal-dialog-centered">
@@ -288,19 +327,16 @@
 
         // Button WS Chart 1
         $('#open-ws-1').click(function() {
-            var dWeek = $('#hidden-week').val();
-
             // Unset chart title
             $('#chart-title-1').addClass('d-none');
-
             // Hide chart #2
             $('#chart-2').addClass('d-none');
-
             // hide tabs
             $('.nav').addClass('d-none');
-
             // hide/show related button
             $('#btn-close').removeClass('d-none');
+            // hide WS button
+            $('#open-ws-1').addClass('d-none');
 
             $.ajax({
                 type: 'POST',
@@ -308,13 +344,9 @@
                 dataType: "json",
                 data: {
                     data_type: "FL",
-                    data_week: dWeek
+                    data_week: $('#hidden-week').val()
                 },
                 success: function(response) {
-                    console.log(response);
-                    // hide WS button
-                    $('#open-ws-1').addClass('d-none');
-
                     // Function to get the latest date
                     function getLatestDate(data) {
                         var maxNumb = [];
@@ -328,58 +360,49 @@
                     // Populate dataset
                     var dataSet = [],
                         dataCat = [],
-                        tempPlan = [],
-                        tempAct = [];
+                        totPlan = [],
+                        totAct = [];
                     var rawData = response.result;
-                    var sortedData = sortWsData(rawData);
-
-                    // Generate marquees
-                    if (sortedData.length > 3) {
-                        $('#text').html('YMPI');
-                    } else {
-                        $('#marquee-text').html('bla bla');
-                    }
+                    var sortedData = sortWsDataIndex(rawData);
 
                     sortedData.forEach(function(dt) {
                         dataCat.push({
-                            "label": dt.produk.toUpperCase()
+                            "label": dt.tipe_produk.toUpperCase()
                         });
 
-                        var filteredData = [];
-                        var theDate = getLatestDate(dt);
-                        dt.data.forEach(function(x) {
-                            if (x.tanggal == theDate) filteredData.push(x);
-                        });
-
-                        filteredData.forEach(function(y) {
-                            tempPlan.push({ "value": y.target_persentase - y.persentase_shipment });
-                            tempAct.push({ "value": y.persentase_shipment });
+                        var d = dt.data;
+                        var tempPlan = 0,
+                            tempAct = 0;
+                        d.forEach(function(val) {
+                            tempPlan += parseInt(val.plan);
+                            tempAct += parseInt(val.actual);
                         })
+
+                        totPlan.push({ "value": tempPlan })
+                        totAct.push({ "value": tempAct });
                     });
 
                     dataSet = [{
-                        "seriesname": "Completed",
-                        "color": "8A2BE2",
-                        "data": tempAct
-                    }, {
-                        "seriesname": "In_Progress",
+                        "seriesname": "Plan",
                         "color": "F0E68C",
-                        "data": tempPlan
+                        "data": totPlan
+                    }, {
+                        "seriesname": "Actual",
+                        "color": "8A2BE2",
+                        "data": totAct
                     }];
-
-                    console.log(dataSet);
 
                     // Render WS chart
                     $('#chart-container-1').insertFusionCharts({
-                        type: 'scrollstackedcolumn2d',
-                        width: 1200,
+                        type: 'mscolumn2d',
+                        width: 1024,
                         height: 600,
                         dataFormat: 'json',
                         dataSource: {
                             "chart": {
                                 "caption": "Weekly Shipping Chart (週次出荷コンテナー別) - ETD YMPI based (工場出荷日の基準)",
                                 "captionFontSize": "25",
-                                "subCaption": "Week " + dWeek,
+                                "subCaption": "Week " + $('#hidden-week').val(),
                                 "subcaptionFontSize": "20",
                                 "baseFont": "Meiryo",
                                 // "baseFontSize": "15",
@@ -395,7 +418,6 @@
                                 "showValues": "1",
                                 "valueFontSize": "15",
                                 "valueFontBold": "1",
-                                "numberSuffix": "%",
                                 "bgColor": "#DDDDDD",
                                 "bgAlpha": "50",
                                 "id": 'main-chart'
@@ -404,6 +426,57 @@
                                 "category": dataCat
                             }],
                             "dataset": dataSet
+                        },
+                        "events": {
+                            "dataPlotClick": function(eventObj, dataObj) {
+
+                                $('#modal-ws-title').html('Data Kesesuaian: ' + dataObj.categoryLabel);
+                                $("#table-ws-tgl").html("Minggu ke: " + $('#hidden-week').val());
+
+                                // clear the table
+                                $("#table-ws-data").html('');
+
+                                var totPlan = 0,
+                                    totAct = 0,
+                                    totDiff = 0;
+
+                                var cdata;
+                                $.each(sortedData, function(key, val) {
+                                    if (val.tipe_produk == dataObj.categoryLabel.toLowerCase()) {
+                                        cdata = val.data;
+                                        cdata.forEach(function(value) {
+                                            // mencari diff dari actual dan plan
+                                            var diff = parseInt(value.actual) - parseInt(value.plan);
+                                            // jika diff tidak sama dengan nol, maka tampilkan
+                                            if (diff != 0) var diffLabel = diff;
+                                            // tapi jika diff = nol, maka jangan ditampilkan
+                                            else var diffLabel = '';
+
+                                            // jika diff tidak sama dgn nol, maka render element dan hitung total
+                                            if (diff != 0) {
+                                                $("#table-ws-data").append("<tr><td>" + value.gmc + "</td><td>" + value.description + "</td><td class='text-right'>" + value.plan + "</td><td class='text-right'>" + value.actual + "</td><td class='text-right'>" + diffLabel + "</td></tr>");
+
+                                                totPlan += parseInt(value.plan);
+                                                totAct += parseInt(value.actual);
+                                            }
+                                        })
+                                    }
+                                });
+
+                                // Format the numbers
+                                // totPlan = numberWithCommas(totPlan);
+                                // totAct = numberWithCommas(totAct);
+                                // totDiff = numberWithCommas(totDiff);
+
+                                // append the Qty total
+                                $('#table-ws-total-plan').html(totPlan);
+                                $('#table-ws-total-actual').html(totAct);
+                                // $('#table-ws-total-diff').html(totDiff);
+
+                                // Show the MODAL
+                                $('#modal-ws').modal('show');
+
+                            }
                         }
                     });
                 },
@@ -413,7 +486,7 @@
             })
         });
 
-        // Button WS Chart 1
+        // Button WS Chart 2
         $('#open-ws-2').click(function() {
             var dWeek = $('#hidden-week').val();
 
@@ -493,8 +566,6 @@
                         "color": "F0E68C",
                         "data": tempPlan
                     }];
-
-                    console.log(dataSet);
 
                     // Render WS chart
                     $('#chart-container-1').insertFusionCharts({
