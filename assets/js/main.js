@@ -434,6 +434,12 @@ var showChart = function(w) {
     // Save $week value in hidden input
     $('#hidden-week').val(w);
 
+    
+
+    // unhide chart titles
+    $('#chart-title-1').removeClass('d-none');
+    $('#chart-title-2').removeClass('d-none');
+
     $.ajax({
         type: 'POST',
         url: 'api/getData.php',
