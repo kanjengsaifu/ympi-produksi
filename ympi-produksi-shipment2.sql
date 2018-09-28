@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 28 Sep 2018 pada 05.09
+-- Waktu pembuatan: 28 Sep 2018 pada 05.47
 -- Versi server: 10.1.34-MariaDB
 -- Versi PHP: 7.2.8
 
@@ -28,6 +28,7 @@ SET time_zone = "+00:00";
 -- Struktur dari tabel `perolehan`
 --
 
+DROP TABLE IF EXISTS `perolehan`;
 CREATE TABLE `perolehan` (
   `id` int(20) NOT NULL,
   `week` int(11) NOT NULL,
@@ -3569,6 +3570,7 @@ INSERT INTO `perolehan` (`id`, `week`, `tanggal`, `tipe_produk`, `gmc`, `descrip
 -- Struktur dari tabel `shipment_2`
 --
 
+DROP TABLE IF EXISTS `shipment_2`;
 CREATE TABLE `shipment_2` (
   `id` int(20) NOT NULL,
   `week` int(11) NOT NULL,
