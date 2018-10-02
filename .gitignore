@@ -1,3 +1,2 @@
 .DS_Store
-/api/conn.php
-*.sql
+api/conn.php

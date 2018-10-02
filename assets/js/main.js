@@ -16,24 +16,27 @@ var numberWithCommas = function(nStr) {
 var renderMainChart = function(data) {
     // hide buttons
     $('#btn-close, #btn-ws').addClass('d-none');
-    $('#open-ws-1').removeClass('d-none');
+    $('#open-ws-1, #open-ws-2').removeClass('d-none');
 
     // Un-hide chart #2 container & reset Tabs
     $('#chart-2').removeClass('d-none');
 
-    // Set chart title
-    // $('#chart-title-1').html('Daily Production 日次生産 (Band Instrument)');
-    // $('#chart-title-2').html('Daily Production 日次生産 (Educational Instrument)');
+    // Get date
+    var date = $('#hidden-date').val();
 
     // Chart #1
     $('#chart-container-1').insertFusionCharts({
         type: 'scrollstackedcolumn2d',
         width: 1200,
-        height: 230,
+        height: 530,
         dataFormat: 'json',
         dataSource: {
             "chart": {
                 "caption": "Daily Production 日次生産 (Band Instrument)",
+                "subCaption": moment(date).format('D MMMM YYYY'),
+                "subcaptionFontSize": "20",
+                "subCaptionFontColor": "008000",
+                "subCaptionFontBold": "1",
                 "CaptionFontBold": "1",
                 "CaptionFontColor": "008000",
                 "captionFontSize": "15",
@@ -78,7 +81,7 @@ var renderMainChart = function(data) {
                     url: 'api/postData.php',
                     dataType: "json",
                     data: {
-                        tanggal: moment(dataObj.categoryLabel).format('YYYY-MM-DD')
+                        tanggal: $('#hidden-date').val()
                     },
                     success: function(res) {
                         var rawObj = res.result;
@@ -91,7 +94,13 @@ var renderMainChart = function(data) {
                             asDiffPlus = 0,
                             asDiffMin = 0,
                             tsDiffPlus = 0,
-                            tsDiffMin = 0;
+                            tsDiffMin = 0,
+                            pnDiffPlus = 0,
+                            pnDiffMin = 0,
+                            vnDiffPlus = 0,
+                            vnDiffMin = 0,
+                            rcDiffPlus = 0,
+                            rcDiffMin = 0;
 
                         rawObj.forEach(function(dt) {
                             if (dt.tipe_produk == 'fl') {
@@ -117,6 +126,24 @@ var renderMainChart = function(data) {
                                 if (tsCalc > 0) tsDiffPlus += tsCalc;
                                 else tsDiffMin += tsCalc;
                             }
+
+                            if (dt.tipe_produk == 'pn') {
+                                var pnCalc = dt.actual - dt.plan;
+                                if (pnCalc > 0) pnDiffPlus += pnCalc;
+                                else pnDiffMin += pnCalc;
+                            }
+
+                            if (dt.tipe_produk == 'vn') {
+                                var vnCalc = dt.actual - dt.plan;
+                                if (vnCalc > 0) vnDiffPlus += vnCalc;
+                                else vnDiffMin += vnCalc;
+                            }
+
+                            if (dt.tipe_produk == 'rc') {
+                                var rcCalc = dt.actual - dt.plan;
+                                if (rcCalc > 0) rcDiffPlus += rcCalc;
+                                else rcDiffMin += rcCalc;
+                            }
                         })
 
                         // Populate datas
@@ -129,6 +156,12 @@ var renderMainChart = function(data) {
                             "label": "AS"
                         }, {
                             "label": "TS"
+                        }, {
+                            "label": "PN"
+                        }, {
+                            "label": "VN"
+                        }, {
+                            "label": "RC"
                         }];
 
                         finalData.surplus = [{
@@ -139,6 +172,12 @@ var renderMainChart = function(data) {
                             "value": asDiffPlus
                         }, {
                             "value": tsDiffPlus
+                        }, {
+                            "value": pnDiffPlus
+                        }, {
+                            "value": vnDiffPlus
+                        }, {
+                            "value": rcDiffPlus
                         }];
 
                         finalData.minus = [{
@@ -149,6 +188,12 @@ var renderMainChart = function(data) {
                             "value": asDiffMin
                         }, {
                             "value": tsDiffMin
+                        }, {
+                            "value": pnDiffMin
+                        }, {
+                            "value": vnDiffMin
+                        }, {
+                            "value": rcDiffMin
                         }];
 
                         // Render the Extended Chart
@@ -160,129 +205,129 @@ var renderMainChart = function(data) {
     });
 
     // Chart #2
-    $('#chart-container-2').insertFusionCharts({
-        type: 'scrollstackedcolumn2d',
-        width: 1200,
-        height: 230,
-        dataFormat: 'json',
-        dataSource: {
-            "chart": {
-                "caption": "Daily Production 日次生産 (Educational Instrument)",
-                "CaptionFontBold": "1",
-                "CaptionFontColor": "008000",
-                "captionFontSize": "15",
-                // "subCaptionFontSize": "25",
-                "baseFont": "Meiryo",
-                //"yAxisName": "Pencapaian 達成",
-                "theme": "fusion",
-                "stack100percent": "1",
-                "decimals": "1",
-                "plotFillAlpha": "80",
-                "divLineIsDashed": "1",
-                "divLineDashLen": "1",
-                "divLineGapLen": "1",
-                "showValues": "1",
-                "valueFontBold": "1",
-                "bgColor": "#DDDDDD",
-                "bgAlpha": "50",
-                "valueFontSize": "12"
-            },
-            "categories": [{
-                "category": data.categories
-            }],
-            "dataset": [{
-                    "seriesname": "Actual",
-                    "color": "483D8B",
-                    "data": data.plan_2
-                },
-                {
-                    "seriesname": "Minus",
-                    "color": "F0E68C",
-                    "data": data.actual_2
-                }
-            ]
-        },
-        "events": {
-            "dataPlotClick": function(eventObj, dataObj) {
-                var finalData = {}
-                $.ajax({
-                    type: 'POST',
-                    url: 'api/postData2.php',
-                    dataType: "json",
-                    data: {
-                        tanggal: moment(dataObj.categoryLabel).format('YYYY-MM-DD')
-                    },
-                    success: function(res) {
-                        var rawObj = res.result;
+    // $('#chart-container-2').insertFusionCharts({
+    //     type: 'scrollstackedcolumn2d',
+    //     width: 1200,
+    //     height: 230,
+    //     dataFormat: 'json',
+    //     dataSource: {
+    //         "chart": {
+    //             "caption": "Daily Production 日次生産 (Educational Instrument)",
+    //             "CaptionFontBold": "1",
+    //             "CaptionFontColor": "008000",
+    //             "captionFontSize": "15",
+    //             // "subCaptionFontSize": "25",
+    //             "baseFont": "Meiryo",
+    //             //"yAxisName": "Pencapaian 達成",
+    //             "theme": "fusion",
+    //             "stack100percent": "1",
+    //             "decimals": "1",
+    //             "plotFillAlpha": "80",
+    //             "divLineIsDashed": "1",
+    //             "divLineDashLen": "1",
+    //             "divLineGapLen": "1",
+    //             "showValues": "1",
+    //             "valueFontBold": "1",
+    //             "bgColor": "#DDDDDD",
+    //             "bgAlpha": "50",
+    //             "valueFontSize": "12"
+    //         },
+    //         "categories": [{
+    //             "category": data.categories
+    //         }],
+    //         "dataset": [{
+    //                 "seriesname": "Actual",
+    //                 "color": "483D8B",
+    //                 "data": data.plan_2
+    //             },
+    //             {
+    //                 "seriesname": "Minus",
+    //                 "color": "F0E68C",
+    //                 "data": data.actual_2
+    //             }
+    //         ]
+    //     },
+    //     "events": {
+    //         "dataPlotClick": function(eventObj, dataObj) {
+    //             var finalData = {}
+    //             $.ajax({
+    //                 type: 'POST',
+    //                 url: 'api/postData2.php',
+    //                 dataType: "json",
+    //                 data: {
+    //                     tanggal: moment(dataObj.categoryLabel).format('YYYY-MM-DD')
+    //                 },
+    //                 success: function(res) {
+    //                     var rawObj = res.result;
 
-                        // Find each product's diff
-                        var pnDiffPlus = 0,
-                            pnDiffMin = 0,
-                            rcDiffPlus = 0,
-                            rcDiffMin = 0,
-                            vnDiffPlus = 0,
-                            vnDiffMin = 0;
+    //                     // Find each product's diff
+    //                     var pnDiffPlus = 0,
+    //                         pnDiffMin = 0,
+    //                         rcDiffPlus = 0,
+    //                         rcDiffMin = 0,
+    //                         vnDiffPlus = 0,
+    //                         vnDiffMin = 0;
 
-                        rawObj.forEach(function(dt) {
-                            if (dt.tipe_produk == 'pn') {
-                                var pnCalc = dt.actual - dt.plan;
-                                if (pnCalc > 0) pnDiffPlus += pnCalc;
-                                else pnDiffMin += pnCalc;
-                            }
+    //                     rawObj.forEach(function(dt) {
+    //                         if (dt.tipe_produk == 'pn') {
+    //                             var pnCalc = dt.actual - dt.plan;
+    //                             if (pnCalc > 0) pnDiffPlus += pnCalc;
+    //                             else pnDiffMin += pnCalc;
+    //                         }
 
-                            if (dt.tipe_produk == 'rc') {
-                                var rcCalc = dt.actual - dt.plan;
-                                if (rcCalc > 0) rcDiffPlus += rcCalc;
-                                else rcDiffMin += rcCalc;
-                            }
+    //                         if (dt.tipe_produk == 'rc') {
+    //                             var rcCalc = dt.actual - dt.plan;
+    //                             if (rcCalc > 0) rcDiffPlus += rcCalc;
+    //                             else rcDiffMin += rcCalc;
+    //                         }
 
-                            if (dt.tipe_produk == 'vn') {
-                                var vnCalc = dt.actual - dt.plan;
-                                if (vnCalc > 0) vnDiffPlus += vnCalc;
-                                else vnDiffMin += vnCalc;
-                            }
-                        })
+    //                         if (dt.tipe_produk == 'vn') {
+    //                             var vnCalc = dt.actual - dt.plan;
+    //                             if (vnCalc > 0) vnDiffPlus += vnCalc;
+    //                             else vnDiffMin += vnCalc;
+    //                         }
+    //                     })
 
-                        // Populate datas
-                        finalData.tanggal = dataObj.categoryLabel;
-                        finalData.categories = [{
-                            "label": "PN"
-                        }, {
-                            "label": "RC"
-                        }, {
-                            "label": "VN"
-                        }];
+    //                     // Populate datas
+    //                     finalData.tanggal = dataObj.categoryLabel;
+    //                     finalData.categories = [{
+    //                         "label": "PN"
+    //                     }, {
+    //                         "label": "RC"
+    //                     }, {
+    //                         "label": "VN"
+    //                     }];
 
-                        finalData.surplus = [{
-                            "value": pnDiffPlus
-                        }, {
-                            "value": rcDiffPlus
-                        }, {
-                            "value": vnDiffPlus
-                        }];
+    //                     finalData.surplus = [{
+    //                         "value": pnDiffPlus
+    //                     }, {
+    //                         "value": rcDiffPlus
+    //                     }, {
+    //                         "value": vnDiffPlus
+    //                     }];
 
-                        finalData.minus = [{
-                            "value": pnDiffMin
-                        }, {
-                            "value": rcDiffMin
-                        }, {
-                            "value": vnDiffMin
-                        }];
+    //                     finalData.minus = [{
+    //                         "value": pnDiffMin
+    //                     }, {
+    //                         "value": rcDiffMin
+    //                     }, {
+    //                         "value": vnDiffMin
+    //                     }];
 
-                        // Render the Extended Chart
-                        renderExtChart(finalData);
-                    }
-                })
-            }
-        }
-    });
+    //                     // Render the Extended Chart
+    //                     renderExtChart(finalData);
+    //                 }
+    //             })
+    //         }
+    //     }
+    // });
 }
 
 // Render extended chart Fn
 var renderExtChart = function(data) {
     // un-hide buttons
     $('#btn-close, #btn-ws').removeClass('d-none');
-    $('#open-ws-1').addClass('d-none');
+    $('#open-ws-1, #open-ws-2').addClass('d-none');
 
     // hide chart #2 container, chart #1 title, marquee & tabs
     $('#chart-2, #title-chart-1, .nav').addClass('d-none');
@@ -291,21 +336,13 @@ var renderExtChart = function(data) {
     $('#chart-title-1').addClass('d-none');
 
     // save respected value on a hidden fields
-    $('#hidden-date').val(moment(data.tanggal).format('YYYY-MM-DD'));
+    // $('#hidden-date').val(moment(data.tanggal).format('YYYY-MM-DD'));
     $('#hidden-type').val(data.categories[0].label);
-
-    // if (data.categories.length == 3) {
-    //     // Marque for PN,RC,VN products
-    //     $('#marquee-text').html('Aitemu goto no seisan no kekka wa. Hasil kesesuaian per item sebagai berikut: KBI kara case pianica no okure ga arimasu kara, pianica wa mainasu Hap Hyaku roku juu setto desu. Karena ada keterlambatan case Pianica dari KBI, Pianica minus 860 set. Rikooda to Venova no aitemu go to no okure wa arimasen. Tidak ada keterlambatan per item untuk produk Recorder dan Venova');
-    // } else {
-    //     // Marque for FL,CL,AS,TS products
-    //     $('#marquee-text').html('Aitemu goto no seisan no kekka wa. Hasil kesesuaian per item sebagai berikut: Furuto wa mainasu Ni Juu Go setto, purasu Ni Juu Go setto desu. FL minus 25 set, plus 25 set. Kurarinetto wa mainasu Juu setto, purasu Juu setto desu. Aruto sakkusu wa mainasu Ni Juu setto, purasu Ni Juu setto desu. Sax Alto minus 20 set, plus 20 set. Tena Sakkusu wa mainasu Go setto. Purasu Go setto desu. Sax Tenor minus 5 set, plus 5 set');
-    // }
 
     // main action
     $('#chart-container-1').insertFusionCharts({
         type: 'mscolumn2d',
-        width: 1240,
+        width: 1200,
         height: 530,
         dataFormat: 'json',
         dataSource: {
@@ -313,12 +350,11 @@ var renderExtChart = function(data) {
                 "caption": "Kesesuaian Per Item 部品ごとの適合性",
                 "captionFontSize": "20",
                 "CaptionFontBold": "1",
-                "subCaption": "Date : " + moment(data.tanggal).format('DD MMMM YYYY'),
-                // "xAxisName": "Produk",
+                "subCaption": moment($('#hidden-date').val()).format('DD MMMM YYYY'),
                 "subcaptionFontSize": "20",
                 "subCaptionFontColor": "008000",
                 "subCaptionFontBold": "1",
-                "plotSpacePercent":"50",
+                "plotSpacePercent": "50",
                 "baseFont": "Meiryo",
                 "yAxisName": "Perolehan",
                 "theme": "fusion",
@@ -415,9 +451,6 @@ var renderExtChart = function(data) {
 
 // Call API for Main Chart Fn
 var initiateData = function() {
-    // reset components this.state
-    $('.marquee, #title-chart-1, .nav').removeClass('d-none');
-
     // reset all Charts states
     $('#chart-container-1, #chart-container-2, #tab-chart-1').html('');
 
@@ -453,7 +486,7 @@ var showChart = function(w) {
     // Save $week value in hidden input
     $('#hidden-week').val(w);
 
-    
+
 
     // unhide chart titles
     $('#chart-title-1').removeClass('d-none');
@@ -467,48 +500,38 @@ var showChart = function(w) {
             week: w
         },
         success: function(response) {
+            $('#hidden-week').val(w);
+            $('#hidden-date').val(response.result[0].tanggal);
+
             var finalData = {},
                 dataCategories = [],
                 dataPlan = [],
-                dataActual = [],
-                dataPlan2 = [],
-                dataActual2 = [];
+                dataActual = [];
 
             // summarize data
             if (response.status == 'ok') {
                 // Grouping data by "Tanggal"
-                var rawObj = response.result;
+                var rawData = response.result;
 
                 // call teh SortData Fn
-                var rawData = sortData(rawObj);
+                // var rawData = sortData(rawObj);
 
-                // Populating for chart
                 // Populating for chart
                 rawData.forEach(function(data) {
-                    var dataTgl = {
-                        "label": moment(data.category).format('DD MMM YY')
+                    var dataProd = {
+                        "label": data.tipe_produk
                     }
-                    dataCategories.push(dataTgl);
+                    dataCategories.push(dataProd);
 
                     var dtAct = {
-                        "value": (data.flPlan - data.flAct) + (data.clPlan - data.clAct) + (data.asPlan - data.asAct) + (data.tsPlan - data.tsAct)
+                        "value": data.actual
                     }
                     dataActual.push(dtAct);
 
                     var dtPlan = {
-                        "value": data.flAct + data.clAct + data.asAct + data.tsAct
+                        "value": data.plan
                     }
                     dataPlan.push(dtPlan);
-
-                    var dtAct2 = {
-                        "value": (data.pnPlan - data.pnAct) + (data.rcPlan - data.rcAct) + (data.vnPlan - data.vnAct)
-                    }
-                    dataActual2.push(dtAct2);
-
-                    var dtPlan2 = {
-                        "value": data.pnAct + data.rcAct + data.vnAct
-                    }
-                    dataPlan2.push(dtPlan2);
                 })
             }
 
@@ -517,8 +540,6 @@ var showChart = function(w) {
                 "categories": dataCategories,
                 "plan": dataPlan,
                 "actual": dataActual,
-                "plan_2": dataPlan2,
-                "actual_2": dataActual2
             };
 
             renderMainChart(finalData);
