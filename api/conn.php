@@ -1,9 +1,9 @@
 <?php
 //database details
 $dbHost = 'localhost';
-$dbUsername = 'ympi';
-$dbPassword = 'Hello123#';
-$dbName = 'ympi-produksi';
+$dbUsername = 'root';
+$dbPassword = '';
+$dbName = 'ympi-produksi-shipment2';
 
 //create connection and select DB
 $db = new mysqli($dbHost, $dbUsername, $dbPassword, $dbName);

@@ -1,4 +1,5 @@
 // Function for number formatting
+
 var numberWithCommas = function(nStr) {
     nStr += '';
     x = nStr.split('.');
@@ -21,19 +22,25 @@ var renderMainChart = function(data) {
     $('#chart-2').removeClass('d-none');
 
     // Set chart title
-    $('#chart-title-1').html('Daily Production 日次生産 (Band Instrument)');
-    $('#chart-title-2').html('Daily Production 日次生産 (Educational Instrument)');
+    // $('#chart-title-1').html('Daily Production 日次生産 (Band Instrument)');
+    // $('#chart-title-2').html('Daily Production 日次生産 (Educational Instrument)');
 
     // Chart #1
     $('#chart-container-1').insertFusionCharts({
         type: 'scrollstackedcolumn2d',
-        width: 1024,
-        height: 300,
+        width: 1200,
+        height: 230,
         dataFormat: 'json',
         dataSource: {
             "chart": {
-                "labelDisplay": "none",
-                "yAxisName": "Pencapaian",
+                "caption": "Daily Production 日次生産 (Band Instrument)",
+                "CaptionFontBold": "1",
+                "CaptionFontColor": "008000",
+                "captionFontSize": "15",
+                "baseFont": "Meiryo",
+                "labelDisplay": "",
+
+                //"yAxisName": "Pencapaian 達成",
                 "theme": "fusion",
                 "stack100percent": "1",
                 "decimals": "1",
@@ -42,7 +49,7 @@ var renderMainChart = function(data) {
                 "divLineDashLen": "5",
                 "divLineGapLen": "5",
                 "showValues": "1",
-                "valueFontSize": "15",
+                "valueFontSize": "12",
                 "valueFontBold": "1",
                 "bgColor": "#DDDDDD",
                 "bgAlpha": "50",
@@ -53,7 +60,7 @@ var renderMainChart = function(data) {
             }],
             "dataset": [{
                     "seriesname": "Actual",
-                    "color": "8A2BE2",
+                    "color": "483D8B",
                     "data": data.plan
                 },
                 {
@@ -155,12 +162,18 @@ var renderMainChart = function(data) {
     // Chart #2
     $('#chart-container-2').insertFusionCharts({
         type: 'scrollstackedcolumn2d',
-        width: 1024,
-        height: 300,
+        width: 1200,
+        height: 230,
         dataFormat: 'json',
         dataSource: {
             "chart": {
-                "yAxisName": "Pencapaian",
+                "caption": "Daily Production 日次生産 (Educational Instrument)",
+                "CaptionFontBold": "1",
+                "CaptionFontColor": "008000",
+                "captionFontSize": "15",
+                // "subCaptionFontSize": "25",
+                "baseFont": "Meiryo",
+                //"yAxisName": "Pencapaian 達成",
                 "theme": "fusion",
                 "stack100percent": "1",
                 "decimals": "1",
@@ -172,14 +185,14 @@ var renderMainChart = function(data) {
                 "valueFontBold": "1",
                 "bgColor": "#DDDDDD",
                 "bgAlpha": "50",
-                "valueFontSize": "15"
+                "valueFontSize": "12"
             },
             "categories": [{
                 "category": data.categories
             }],
             "dataset": [{
                     "seriesname": "Actual",
-                    "color": "8A2BE2",
+                    "color": "483D8B",
                     "data": data.plan_2
                 },
                 {
@@ -292,15 +305,21 @@ var renderExtChart = function(data) {
     // main action
     $('#chart-container-1').insertFusionCharts({
         type: 'mscolumn2d',
-        width: 1103,
-        height: 600,
+        width: 1240,
+        height: 530,
         dataFormat: 'json',
         dataSource: {
             "chart": {
                 "caption": "Kesesuaian Per Item 部品ごとの適合性",
-                "captionFontSize": "25",
-                "subCaption": "Tanggal " + moment(data.tanggal).format('DD MMMM YYYY'),
+                "captionFontSize": "20",
+                "CaptionFontBold": "1",
+                "subCaption": "Date : " + moment(data.tanggal).format('DD MMMM YYYY'),
                 // "xAxisName": "Produk",
+                "subcaptionFontSize": "20",
+                "subCaptionFontColor": "008000",
+                "subCaptionFontBold": "1",
+                "plotSpacePercent":"50",
+                "baseFont": "Meiryo",
                 "yAxisName": "Perolehan",
                 "theme": "fusion",
                 "plotFillAlpha": "80",
@@ -318,8 +337,8 @@ var renderExtChart = function(data) {
                 "category": data.categories
             }],
             "dataset": [{
-                    "seriesname": "Surplus",
-                    "color": "8A2BE2",
+                    "seriesname": "Plus",
+                    "color": "483D8B",
                     "data": data.surplus
                 },
                 {
@@ -343,7 +362,7 @@ var renderExtChart = function(data) {
                         data_date: $('#hidden-date').val()
                     },
                     success: function(res) {
-                        $('#modal-title').html('Data Kesesuaian: ' + dataObj.categoryLabel);
+                        $('#modal-title').html('Kesesuaian Per Item 部品ごとの適合性: ' + dataObj.categoryLabel);
                         $("#table-tgl").html(moment($('#hidden-date').val()).format('DD MMMM YYYY'));
 
                         // clear the table
