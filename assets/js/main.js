@@ -40,7 +40,7 @@ var renderMainChart = function(data) {
                 "subCaption": moment(date).format('D MMMM YYYY'),
                 "subcaptionFontSize": "25",
                 "subCaptionFontColor": "008000",
-                "subCaptionFontBold": "1",                
+                "subCaptionFontBold": "1",
                 "baseFont": "Meiryo",
                 "numvisibleplot": "7",
                 //"labelDisplay": "",
@@ -165,11 +165,9 @@ var renderMainChart = function(data) {
                             "label": "PN"
                         }, {
                             "label": "VN"
-                        }
-                        , {
+                        }, {
                             "label": "RC"
-                        }
-                        ];
+                        }];
 
                         finalData.surplus = [{
                             "value": flDiffPlus
@@ -183,11 +181,9 @@ var renderMainChart = function(data) {
                             "value": pnDiffPlus
                         }, {
                             "value": vnDiffPlus
-                        }
-                        , {
+                        }, {
                             "value": rcDiffPlus
-                        }
-                        ];
+                        }];
 
                         finalData.minus = [{
                             "value": flDiffMin
@@ -201,11 +197,9 @@ var renderMainChart = function(data) {
                             "value": pnDiffMin
                         }, {
                             "value": vnDiffMin
-                        }
-                        , {
+                        }, {
                             "value": rcDiffMin
-                        }
-                        ];
+                        }];
 
                         // Render the Extended Chart
                         renderExtChart(finalData);
@@ -528,22 +522,37 @@ var showChart = function(w) {
                 // var rawData = sortData(rawObj);
 
                 // Populating for chart
+                var flData, clData, asData, tsData, pnData, rcData, vnData;
                 rawData.forEach(function(data) {
-                    var dataProd = {
-                        "label": data.tipe_produk
+                    switch (data.tipe_produk) {
+                        case 'cl':
+                            clData = data;
+                            break;
+                        case 'as':
+                            asData = data;
+                            break;
+                        case 'ts':
+                            tsData = data;
+                            break;
+                        case 'pn':
+                            pnData = data;
+                            break;
+                        case 'rc':
+                            rcData = data;
+                            break;
+                        case 'vn':
+                            vnData = data;
+                            break;
+                        default:
+                            flData = data;
+                            break;
                     }
-                    dataCategories.push(dataProd);
+                });
 
-                    var dtAct = {
-                        "value": data.actual
-                    }
-                    dataActual.push(dtAct);
+                dataCategories = [{ label: "FL" }, { label: "CL" }, { label: "AS" }, { label: "TS" }, { label: "PN" }, { label: "VN" }, { label: "RC" }];
+                dataPlan = [{ value: flData.plan }, { value: clData.plan }, { value: asData.plan }, { value: tsData.plan }, { value: pnData.plan }, { value: vnData.plan }, { value: rcData.plan }];
+                dataActual = [{ value: flData.actual }, { value: clData.actual }, { value: asData.actual }, { value: tsData.actual }, { value: pnData.actual }, { value: vnData.actual }, { value: rcData.actual }];
 
-                    var dtPlan = {
-                        "value": data.plan
-                    }
-                    dataPlan.push(dtPlan);
-                })
             }
 
             // populating data
@@ -552,6 +561,8 @@ var showChart = function(w) {
                 "plan": dataPlan,
                 "actual": dataActual,
             };
+
+            console.log(finalData);
 
             renderMainChart(finalData);
         }
@@ -615,12 +626,10 @@ var sortData = function(rawObj) {
             } else if (dt.tipe_produk == 'pn') {
                 dtPnPlan += parseInt(dt.plan);
                 dtPnAct += parseInt(dt.actual);
-            } 
-            else if (dt.tipe_produk == 'rc') {
+            } else if (dt.tipe_produk == 'rc') {
                 dtRcPlan += parseInt(dt.plan);
                 dtRcAct += parseInt(dt.actual);
-            }
-             else {
+            } else {
                 dtVnPlan += parseInt(dt.plan);
                 dtVnAct += parseInt(dt.actual);
             }
