@@ -27,34 +27,38 @@ var renderMainChart = function(data) {
     // Chart #1
     $('#chart-container-1').insertFusionCharts({
         type: 'scrollstackedcolumn2d',
-        width: 1200,
-        height: 530,
+        renderAt: "chart-container",
+        width: 1120,
+        height: 450,
         dataFormat: 'json',
         dataSource: {
             "chart": {
-                "caption": "Daily Production 日次生産 (Band Instrument)",
-                "subCaption": moment(date).format('D MMMM YYYY'),
-                "subcaptionFontSize": "20",
-                "subCaptionFontColor": "008000",
-                "subCaptionFontBold": "1",
+                "caption": "Actual Production 生産実績",
+                "captionFontSize": "30",
                 "CaptionFontBold": "1",
-                "CaptionFontColor": "008000",
-                "captionFontSize": "15",
+                "CaptionFontColor": "000000",
+                "subCaption": moment(date).format('D MMMM YYYY'),
+                "subcaptionFontSize": "25",
+                "subCaptionFontColor": "008000",
+                "subCaptionFontBold": "1",                
                 "baseFont": "Meiryo",
-                "labelDisplay": "",
-
+                "numvisibleplot": "7",
+                //"labelDisplay": "",
                 //"yAxisName": "Pencapaian 達成",
+                "xAxisName": "Produk",
+                "xAxisFontSize": "40",
                 "theme": "fusion",
                 "stack100percent": "1",
                 "decimals": "1",
+                "plotSpacePercent": "30",
                 "plotFillAlpha": "80",
                 "divLineIsDashed": "1",
-                "divLineDashLen": "5",
-                "divLineGapLen": "5",
+                "divLineDashLen": "1",
+                "divLineGapLen": "1",
                 "showValues": "1",
-                "valueFontSize": "12",
+                "valueFontSize": "30",
                 "valueFontBold": "1",
-                "bgColor": "#DDDDDD",
+                "bgColor": "E0FFFF",
                 "bgAlpha": "50",
                 "id": 'main-chart'
             },
@@ -63,12 +67,12 @@ var renderMainChart = function(data) {
             }],
             "dataset": [{
                     "seriesname": "Actual",
-                    "color": "483D8B",
+                    "color": "008000",
                     "data": data.plan
                 },
                 {
-                    "seriesname": "Minus",
-                    "color": "F0E68C",
+                    "seriesname": "Plan",
+                    "color": "FFD700",
                     "data": data.actual
                 }
             ]
@@ -82,6 +86,7 @@ var renderMainChart = function(data) {
                     dataType: "json",
                     data: {
                         tanggal: $('#hidden-date').val()
+
                     },
                     success: function(res) {
                         var rawObj = res.result;
@@ -160,9 +165,11 @@ var renderMainChart = function(data) {
                             "label": "PN"
                         }, {
                             "label": "VN"
-                        }, {
+                        }
+                        , {
                             "label": "RC"
-                        }];
+                        }
+                        ];
 
                         finalData.surplus = [{
                             "value": flDiffPlus
@@ -176,9 +183,11 @@ var renderMainChart = function(data) {
                             "value": pnDiffPlus
                         }, {
                             "value": vnDiffPlus
-                        }, {
+                        }
+                        , {
                             "value": rcDiffPlus
-                        }];
+                        }
+                        ];
 
                         finalData.minus = [{
                             "value": flDiffMin
@@ -192,9 +201,11 @@ var renderMainChart = function(data) {
                             "value": pnDiffMin
                         }, {
                             "value": vnDiffMin
-                        }, {
+                        }
+                        , {
                             "value": rcDiffMin
-                        }];
+                        }
+                        ];
 
                         // Render the Extended Chart
                         renderExtChart(finalData);
@@ -342,8 +353,8 @@ var renderExtChart = function(data) {
     // main action
     $('#chart-container-1').insertFusionCharts({
         type: 'mscolumn2d',
-        width: 1200,
-        height: 530,
+        width: 1120,
+        height: 490,
         dataFormat: 'json',
         dataSource: {
             "chart": {
@@ -354,7 +365,7 @@ var renderExtChart = function(data) {
                 "subcaptionFontSize": "20",
                 "subCaptionFontColor": "008000",
                 "subCaptionFontBold": "1",
-                "plotSpacePercent": "50",
+                "plotSpacePercent": "25",
                 "baseFont": "Meiryo",
                 "yAxisName": "Perolehan",
                 "theme": "fusion",
@@ -363,7 +374,7 @@ var renderExtChart = function(data) {
                 "divLineDashLen": "1",
                 "divLineGapLen": "1",
                 "showValues": "1",
-                "valueFontSize": "15",
+                "valueFontSize": "30",
                 "valueFontBold": "1",
                 "bgColor": "#DDDDDD",
                 "bgAlpha": "50",
@@ -374,12 +385,12 @@ var renderExtChart = function(data) {
             }],
             "dataset": [{
                     "seriesname": "Plus",
-                    "color": "483D8B",
+                    "color": "008000",
                     "data": data.surplus
                 },
                 {
                     "seriesname": "Minus",
-                    "color": "F0E68C",
+                    "color": "FFD700",
                     "data": data.minus
                 }
             ]
@@ -604,10 +615,12 @@ var sortData = function(rawObj) {
             } else if (dt.tipe_produk == 'pn') {
                 dtPnPlan += parseInt(dt.plan);
                 dtPnAct += parseInt(dt.actual);
-            } else if (dt.tipe_produk == 'rc') {
+            } 
+            else if (dt.tipe_produk == 'rc') {
                 dtRcPlan += parseInt(dt.plan);
                 dtRcAct += parseInt(dt.actual);
-            } else {
+            }
+             else {
                 dtVnPlan += parseInt(dt.plan);
                 dtVnAct += parseInt(dt.actual);
             }
