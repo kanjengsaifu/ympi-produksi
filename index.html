@@ -2,7 +2,7 @@
 
 <head>
     <title>YMPI Produksi</title>
-    <!-- <meta http-equiv="refresh" content="15"> -->
+    <meta http-equiv="refresh" content="60">
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/sweetalert.min.css" />
     <!-- JQuery -->
@@ -27,14 +27,16 @@
 </head>
 
 <body class="container">
+<div id="kop">
     <table style="width:100%">
     <tr>
       <td style="width:33%"><img src="ympi_logo.png" width="160"> </td>
-      <td style="width:34%"><center><a><font size="5" font face="meiryo" color="0000FF"><b>Daily Production 日次生産</b></font></a></center></td>
+      <td style="width:34%"><center><a><font size="5" font face="meiryo" color="000000"><b>Daily Production 日次生産</b></font></a></center></td>
 
       <td style="width:33%; text-align:right;"><a href="http://172.17.128.127/login-chorei/logout.php"><font size="3" font face="meiryo" color="blue"><p align="right">Exit / 出口</p></font> </a></font></td>
     </tr>
   </table>
+</div>
     <!--<div class="row justify-content-center align-items-center pt-5">-->
         
             <!-- <div class="text-center">
@@ -63,16 +65,16 @@ document.getElementById('ct').innerHTML = x;
 
             <div id="chart-container-1" class="text-center tab-content pt-2"><center></center></div>
             <div class="text-right pt-3">
-                <button id="btn-close" class='btn btn-danger d-none'><i class="fas fa-arrow-left"></i> Back バック</button>
+                <button id="btn-close" class='btn btn-danger d-none'><i class="fas fa-arrow-left"></i>
+                    <font size="3" font face="meiryo"> Back バック</font></font></button>
             </div>
         </div>
         <div class="col-12">
             <div class="btn-group float-right" role="group">
-                <button type="button" class="btn btn-default" id="open-ws-1">
+                <!-- <button type="button" class="btn btn-default" id="open-ws-1">
                     <font color="0000FF" size="2"><b>Weekly Shipping Chart (週次出荷コンテナー別)</b></font> <i class="fa fa-arrow-right"></i>
-                </button>
-                &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
-                <button type="button" class="btn btn-default" id="open-ws-1">
+                </button> -->
+                     <button type="button" class="btn btn-default" id="open-ws-1">
                     <font color="0000FF" size="2"><b>Weekly Shipping Chart (週次出荷コンテナー別)</b></font>
                     </font><i class="fa fa-arrow-right"></i>
                 </button>
@@ -334,7 +336,7 @@ document.getElementById('ct').innerHTML = x;
                         // Unset chart title
                         $('#chart-title-1').addClass('d-none');
                         // Hide chart #2
-                        $('#chart-2').addClass('d-none');
+                        $('#chart-2, #kop').addClass('d-none');
                         // hide tabs
                         $('.nav').addClass('d-none');
                         // hide/show related button
@@ -380,7 +382,7 @@ document.getElementById('ct').innerHTML = x;
 
                         dataSet = [{
                             "seriesname": "Completed",
-                            "color": "008000",
+                            "color": "BF00FF",
                             "data": totAct
                         }, {
                             "seriesname": "Uncompleted",
@@ -392,33 +394,41 @@ document.getElementById('ct').innerHTML = x;
                         $('#chart-container-1').insertFusionCharts({
                             type: 'scrollstackedcolumn2d',
                             width: 1120,
-                            height: 490,
+                            height: 520,
                             dataFormat: 'json',
                             dataSource: {
                                 "chart": {
                                     "caption": "Weekly Shipping Chart (週次出荷コンテナー別) - ETD YMPI based (工場出荷日の基準)",
-                                    "captionFontSize": "20",
-                                    "subCaption": "Week " + $('#hidden-week').val(),
+                                    "captionFontSize": "30",
+                                    "CaptionFontColor": "0000FF",
+                                    "CaptionFontBold": "1",
+                                    //"subCaption": "Week " + $('#hidden-week').val(),
+                                    "subCaption": "Week 41",
                                     "subcaptionFontSize": "20",
                                     "subCaptionFontBold": "1",
                                     "subCaptionFontColor": "008000",
-                                    "baseFont": "Meiryo",
+                                    "baseFont": "Arial Black",
+                                    "baseFontSize": "20",
+                                    "baseFontColor": "000000",
                                     // "baseFontSize": "15",
                                     "xAxisName": "Produk",
+                                    "xAxisFontSize": "10",
                                     "yAxisName": "Total Completion",
                                     "theme": "fusion",
                                     "stack100percent": "1",
-                                    "plotSpacePercent": "50",
+                                    "plotSpacePercent": "30",
                                     //"decimals": "1",
-                                    "plotFillAlpha": "80",
+                                    "plotFillAlpha": "30",
                                     "divLineIsDashed": "1",
                                     "divLineDashLen": "1",
                                     "divLineGapLen": "5",
                                     "showValues": "1",
-                                    "valueFontSize": "20",
+                                    "valueFontSize": "30",
+                                    "valueFont": "Arial Black",
+                                    "valueFontColor": "000000",
                                     "valueFontBold": "1",
                                     "numberSuffix": "%",
-                                    "bgColor": "#DDDDDD",
+                                    "bgColor": "E0FFFF",
                                     "bgAlpha": "50",
                                     "id": 'main-chart'
                                 },
@@ -562,13 +572,15 @@ document.getElementById('ct').innerHTML = x;
                         // Render WS chart EDIN
                         $('#chart-container-1').insertFusionCharts({
                             type: 'scrollstackedcolumn2d',
-                            width: 1100,
-                            height: 500,
+                            width: 1120,
+                            height: 440,
                             dataFormat: 'json',
                             dataSource: {
                                 "chart": {
                                     "caption": "Weekly Shipping Chart (週次出荷コンテナー別) - ETD YMPI based (工場出荷日の基準)",
                                     "captionFontSize": "20",
+                                    "CaptionFontColor": "0000FF",
+                                    "CaptionFontBold": "1",
                                     "subCaption": "Week " + $('#hidden-week').val(),
                                     "subcaptionFontSize": "20",
                                     "subCaptionFontBold": "1",
@@ -581,12 +593,12 @@ document.getElementById('ct').innerHTML = x;
                                     "stack100percent": "1",
                                     "plotSpacePercent": "50",
                                     "decimals": "1",
-                                    "plotFillAlpha": "80",
+                                    "plotFillAlpha": "50",
                                     "divLineIsDashed": "1",
                                     "divLineDashLen": "1",
                                     "divLineGapLen": "5",
                                     "showValues": "1",
-                                    "valueFontSize": "20",
+                                    "valueFontSize": "40",
                                     "valueFontBold": "1",
                                     "numberSuffix": "%",
                                     "bgColor": "#DDDDDD",

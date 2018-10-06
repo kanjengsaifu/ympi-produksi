@@ -27,8 +27,8 @@ var renderMainChart = function(data) {
     // Chart #1
     $('#chart-container-1').insertFusionCharts({
         // type: 'mscolumn2d',
-        type: 'stackedcolumn2d',
-        // renderAt: "chart-container",
+        type: 'scrollstackedcolumn2d',
+        renderAt: "chart-container",
         width: 1120,
         height: 380,
         dataFormat: 'json',
@@ -40,7 +40,7 @@ var renderMainChart = function(data) {
                 // "CaptionFontBold": "1",
                 // "CaptionFontColor": "000000",
                 "subCaption": moment(date).format('D MMMM YYYY'),
-                "subcaptionFontSize": "20",
+                "subcaptionFontSize": "15",
                 "subCaptionFontColor": "008000",
                 "subCaptionFontBold": "1",
                 "baseFont": "Arial Black",
@@ -56,17 +56,20 @@ var renderMainChart = function(data) {
                 "stack100percent": "1",
                 "decimals": "1",
                 "plotSpacePercent": "30",
-                "plotFillAlpha": "50",
+                "plotFillAlpha": "30",
                 "divLineIsDashed": "1",
                 "divLineDashLen": "1",
                 "divLineGapLen": "1",
                 "showValues": "1",
                 "valueFontSize": "30",
+                "valueFont": "Arial Black",
+                "valueFontColor": "0000FF",
                 "valueFontBold": "1",
                 "bgColor": "E0FFFF",
                 "bgAlpha": "50",
-                "numberPrefix": "$",
-                "showPercentInTooltip": "0",
+                "numberSuffix": "%",
+                // "numberPrefix": "%",
+                //"showPercentInTooltip": "0",
                 "showValues": "1",
                 "showPercentValues": "1",
                 "id": 'main-chart'
@@ -81,7 +84,7 @@ var renderMainChart = function(data) {
                 },
                 {
                     "seriesname": "Plan",
-                    "color": "FFD700",
+                    "color": "FF0000",
                     "data": data.plan
                 }
             ]
@@ -344,7 +347,7 @@ var renderExtChart = function(data) {
     $('#open-ws-1, #open-ws-2').addClass('d-none');
 
     // hide chart #2 container, chart #1 title, marquee & tabs
-    $('#chart-2, #title-chart-1, .nav').addClass('d-none');
+    $('#chart-2, #kop, #title-chart-1, .nav').addClass('d-none');
 
     // Set chart title
     $('#chart-title-1').addClass('d-none');
@@ -357,29 +360,35 @@ var renderExtChart = function(data) {
     $('#chart-container-1').insertFusionCharts({
         type: 'mscolumn2d',
         width: 1120,
-        height: 490,
+        height: 520,
         dataFormat: 'json',
         dataSource: {
             "chart": {
                 "caption": "Kesesuaian Per Item 部品ごとの適合性",
-                "captionFontSize": "20",
+                "captionFontSize": "30",
+                "captionFont": "Arial Black",
                 "CaptionFontBold": "1",
+                "CaptionFontColor": "0000FF",
                 "subCaption": moment($('#hidden-date').val()).format('DD MMMM YYYY'),
                 "subcaptionFontSize": "20",
                 "subCaptionFontColor": "008000",
                 "subCaptionFontBold": "1",
                 "plotSpacePercent": "25",
-                "baseFont": "Meiryo",
+                "baseFont": "Arial Black",
+                "baseFontSize": "20",
+                "baseFontColor": "000000",
                 "yAxisName": "Perolehan",
                 "theme": "fusion",
-                "plotFillAlpha": "80",
+                "plotFillAlpha": "30",
                 "divLineIsDashed": "1",
                 "divLineDashLen": "1",
                 "divLineGapLen": "1",
                 "showValues": "1",
                 "valueFontSize": "30",
+                "valueFont": "Arial Black",
+                "valueFontColor": "0000FF",
                 "valueFontBold": "1",
-                "bgColor": "#DDDDDD",
+                "bgColor": "E0FFFF",
                 "bgAlpha": "50",
                 "id": 'main-chart'
             },
