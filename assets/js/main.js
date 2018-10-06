@@ -26,32 +26,37 @@ var renderMainChart = function(data) {
 
     // Chart #1
     $('#chart-container-1').insertFusionCharts({
-        type: 'scrollstackedcolumn2d',
-        renderAt: "chart-container",
+        // type: 'mscolumn2d',
+        type: 'stackedcolumn2d',
+        // renderAt: "chart-container",
         width: 1120,
-        height: 450,
+        height: 380,
         dataFormat: 'json',
         dataSource: {
             "chart": {
-                "caption": "Actual Production 生産実績",
-                "captionFontSize": "30",
-                "CaptionFontBold": "1",
-                "CaptionFontColor": "000000",
+                renderAt: 'chart-container',
+                // "caption": "Actual Production 生産実績",
+                // "captionFontSize": "30",
+                // "CaptionFontBold": "1",
+                // "CaptionFontColor": "000000",
                 "subCaption": moment(date).format('D MMMM YYYY'),
-                "subcaptionFontSize": "25",
+                "subcaptionFontSize": "20",
                 "subCaptionFontColor": "008000",
                 "subCaptionFontBold": "1",
-                "baseFont": "Meiryo",
-                "numvisibleplot": "7",
+                "baseFont": "Arial Black",
+                "baseFontColor": "000000",
+                "baseFontSize": "20", // ini untuk mengatur size font axis Y                
+                // "numvisibleplot": "7",
                 //"labelDisplay": "",
                 //"yAxisName": "Pencapaian 達成",
-                "xAxisName": "Produk",
+                //"xAxisName": "Produk",
                 "xAxisFontSize": "40",
+                //"outCnvBaseFont": "50",
                 "theme": "fusion",
                 "stack100percent": "1",
                 "decimals": "1",
                 "plotSpacePercent": "30",
-                "plotFillAlpha": "80",
+                "plotFillAlpha": "50",
                 "divLineIsDashed": "1",
                 "divLineDashLen": "1",
                 "divLineGapLen": "1",
@@ -60,6 +65,10 @@ var renderMainChart = function(data) {
                 "valueFontBold": "1",
                 "bgColor": "E0FFFF",
                 "bgAlpha": "50",
+                "numberPrefix": "$",
+                "showPercentInTooltip": "0",
+                "showValues": "1",
+                "showPercentValues": "1",
                 "id": 'main-chart'
             },
             "categories": [{
@@ -68,12 +77,12 @@ var renderMainChart = function(data) {
             "dataset": [{
                     "seriesname": "Actual",
                     "color": "008000",
-                    "data": data.plan
+                    "data": data.actual
                 },
                 {
                     "seriesname": "Plan",
                     "color": "FFD700",
-                    "data": data.actual
+                    "data": data.plan
                 }
             ]
         },
@@ -549,9 +558,9 @@ var showChart = function(w) {
                     }
                 });
 
-                dataCategories = [{ label: "FL" }, { label: "CL" }, { label: "AS" }, { label: "TS" }, { label: "PN" }, { label: "VN" }, { label: "RC" }];
-                dataPlan = [{ value: flData.plan }, { value: clData.plan }, { value: asData.plan }, { value: tsData.plan }, { value: pnData.plan }, { value: vnData.plan }, { value: rcData.plan }];
-                dataActual = [{ value: flData.actual }, { value: clData.actual }, { value: asData.actual }, { value: tsData.actual }, { value: pnData.actual }, { value: vnData.actual }, { value: rcData.actual }];
+                dataCategories = [{ label: "FLUTE" }, { label: "CLARINET" }, { label: "ALTO SAX" }, { label: "TENOR SAX" }, { label: "PIANICA" }, { label: "VENOVA" }, { label: "RECORDER" }];
+                dataPlan = [{ value: flData.plan2 }, { value: clData.plan2 }, { value: asData.plan2 }, { value: tsData.plan2 }, { value: pnData.plan2 }, { value: vnData.plan2 }, { value: rcData.plan2 }];
+                dataActual = [{ value: flData.actual2 }, { value: clData.actual2 }, { value: asData.actual2 }, { value: tsData.actual2 }, { value: pnData.actual2 }, { value: vnData.actual2 }, { value: rcData.actual2 }];
 
             }
 
