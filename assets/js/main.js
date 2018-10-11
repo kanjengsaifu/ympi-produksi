@@ -54,7 +54,7 @@ var renderMainChart = function(data) {
                 //"outCnvBaseFont": "50",
                 "theme": "fusion",
                 "stack100percent": "1",
-                "decimals": "1",
+                "decimals": "0",
                 "plotSpacePercent": "30",
                 "plotFillAlpha": "30",
                 "divLineIsDashed": "1",
@@ -366,9 +366,9 @@ var renderExtChart = function(data) {
             "chart": {
                 "caption": "Kesesuaian Per Item 部品ごとの適合性",
                 "captionFontSize": "30",
-                "captionFont": "Arial Black",
+                "captionFont": "Meiryo",
                 "CaptionFontBold": "1",
-                "CaptionFontColor": "0000FF",
+                "CaptionFontColor": "000000",
                 "subCaption": moment($('#hidden-date').val()).format('DD MMMM YYYY'),
                 "subcaptionFontSize": "20",
                 "subCaptionFontColor": "008000",
@@ -379,7 +379,7 @@ var renderExtChart = function(data) {
                 "baseFontColor": "000000",
                 "yAxisName": "Perolehan",
                 "theme": "fusion",
-                "plotFillAlpha": "30",
+                "plotFillAlpha": "100",
                 "divLineIsDashed": "1",
                 "divLineDashLen": "1",
                 "divLineGapLen": "1",
@@ -397,12 +397,12 @@ var renderExtChart = function(data) {
             }],
             "dataset": [{
                     "seriesname": "Plus",
-                    "color": "008000",
+                    "color": "00BFFF",
                     "data": data.surplus
                 },
                 {
                     "seriesname": "Minus",
-                    "color": "FFD700",
+                    "color": "FFC0CB",
                     "data": data.minus
                 }
             ]
@@ -568,7 +568,8 @@ var showChart = function(w) {
                 });
 
                 dataCategories = [{ label: "FLUTE" }, { label: "CLARINET" }, { label: "ALTO SAX" }, { label: "TENOR SAX" }, { label: "PIANICA" }, { label: "VENOVA" }, { label: "RECORDER" }];
-                dataPlan = [{ value: flData.plan2 }, { value: clData.plan2 }, { value: asData.plan2 }, { value: tsData.plan2 }, { value: pnData.plan2 }, { value: vnData.plan2 }, { value: rcData.plan2 }];
+                //dataPlan = [{ value: flData.plan2 }, { value: clData.plan2 }, { value: asData.plan2 }, { value: tsData.plan2 }, { value: pnData.plan2 }, { value: vnData.plan2 }, { value: rcData.plan2 }];
+                dataPlan = [{ value: 100 - flData.actual2 }, { value: 100 - clData.actual2 }, { value: 100 - asData.actual2 }, { value: 100 - tsData.actual2 }, { value: 100 - pnData.actual2 }, { value: 100 - vnData.actual2 }, { value: 100 - rcData.actual2 }];
                 dataActual = [{ value: flData.actual2 }, { value: clData.actual2 }, { value: asData.actual2 }, { value: tsData.actual2 }, { value: pnData.actual2 }, { value: vnData.actual2 }, { value: rcData.actual2 }];
 
             }

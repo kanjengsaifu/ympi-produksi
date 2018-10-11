@@ -45,7 +45,7 @@
 
 
              <ul class="nav nav-pills pt-3" id="tab-chart-1"></ul>
-            Last Updated : <script type="text/javascript"> 
+Last Updated : <script type="text/javascript"> 
 function display_c(){
 var refresh=1000; // Refresh rate in milli seconds
 mytime=setTimeout('display_ct()',refresh)
@@ -70,12 +70,19 @@ document.getElementById('ct').innerHTML = x;
             </div>
         </div>
         <div class="col-12">
-            <div class="btn-group float-right" role="group">
+            <a href="http://172.17.128.114/ympi-produksi"><font size="2" font face="meiryo" color="blue"><b>Today</b></font></a>&nbsp &nbsp &nbsp
+            <a href="http://172.17.128.114/ympi-produksi/arsip/2018-10-08"><font size="1" font face="meiryo" color="blue">2018-10-08</font></a>&nbsp &nbsp &nbsp
+            <a href="http://172.17.128.114/ympi-produksi/arsip/2018-10-09"><font size="1" font face="meiryo" color="blue">2018-10-09</font></a>&nbsp &nbsp &nbsp
+            <a href="http://172.17.128.114/ympi-produksi/arsip/2018-10-10"><font size="1" font face="meiryo" color="blue">2018-10-10</font></a>&nbsp &nbsp &nbsp
+            <a href="http://172.17.128.114/ympi-produksi/arsip/2018-10-11"><font size="1" font face="meiryo" color="blue">2018-10-11</font></a>&nbsp &nbsp &nbsp
+            <a href="http://172.17.128.114/ympi-produksi/arsip/2018-10-12"><font size="1" font face="meiryo" color="blue">2018-10-12</font></a>&nbsp &nbsp &nbsp
+            <a href="http://172.17.128.114/ympi-produksi/arsip/2018-10-13"><font size="1" font face="meiryo" color="blue">2018-10-13</font></a>
+        <div class="btn-group float-right" role="group">
                 <!-- <button type="button" class="btn btn-default" id="open-ws-1">
                     <font color="0000FF" size="2"><b>Weekly Shipping Chart (週次出荷コンテナー別)</b></font> <i class="fa fa-arrow-right"></i>
                 </button> -->
                      <button type="button" class="btn btn-default" id="open-ws-1">
-                    <font color="0000FF" size="2"><b>Weekly Shipping Chart (週次出荷コンテナー別)</b></font>
+                    <font color="0000FF" size="1"><b>Weekly Shipping Chart (週次出荷コンテナー別)</b></font>
                     </font><i class="fa fa-arrow-right"></i>
                 </button>
             </div>
@@ -402,8 +409,8 @@ document.getElementById('ct').innerHTML = x;
                                     "captionFontSize": "30",
                                     "CaptionFontColor": "0000FF",
                                     "CaptionFontBold": "1",
-                                    //"subCaption": "Week " + $('#hidden-week').val(),
-                                    "subCaption": "Week 41",
+                                    "subCaption": "Week " + $('#hidden-week').val(),
+                                    //"subCaption": "Week 41",
                                     "subcaptionFontSize": "20",
                                     "subCaptionFontBold": "1",
                                     "subCaptionFontColor": "008000",
@@ -417,7 +424,7 @@ document.getElementById('ct').innerHTML = x;
                                     "theme": "fusion",
                                     "stack100percent": "1",
                                     "plotSpacePercent": "30",
-                                    //"decimals": "1",
+                                    "decimals": "0",
                                     "plotFillAlpha": "30",
                                     "divLineIsDashed": "1",
                                     "divLineDashLen": "1",
@@ -592,7 +599,7 @@ document.getElementById('ct').innerHTML = x;
                                     "theme": "fusion",
                                     "stack100percent": "1",
                                     "plotSpacePercent": "50",
-                                    "decimals": "1",
+                                    "decimals": "0",
                                     "plotFillAlpha": "50",
                                     "divLineIsDashed": "1",
                                     "divLineDashLen": "1",
