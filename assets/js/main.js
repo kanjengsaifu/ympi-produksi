@@ -478,6 +478,7 @@ var initiateData = function() {
     $('#chart-container-1, #chart-container-2, #tab-chart-1').html('');
 
     // Get WEEKS first
+    // 
     $.ajax({
         type: 'GET',
         url: 'api/getWeek.php',
