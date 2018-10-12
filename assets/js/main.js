@@ -568,7 +568,7 @@ var showChart = function(w) {
                 });
 
                 dataCategories = [{ label: "FLUTE" }, { label: "CLARINET" }, { label: "ALTO SAX" }, { label: "TENOR SAX" }, { label: "PIANICA" }, { label: "VENOVA" }, { label: "RECORDER" }];
-                dataPlan = [{ value: flData.plan2 }, { value: clData.plan2 }, { value: asData.plan2 }, { value: tsData.plan2 }, { value: pnData.plan2 }, { value: vnData.plan2 }, { value: rcData.plan2 }];
+                dataPlan = [{ value: 100 - flData.actual2 }, { value: 100 - clData.actual2 }, { value: 100 - asData.actual2 }, { value: 100 - tsData.actual2 }, { value: 100 - pnData.actual2 }, { value: 100 - vnData.actual2 }, { value: 100 - rcData.actual2 }];
                 dataActual = [{ value: flData.actual2 }, { value: clData.actual2 }, { value: asData.actual2 }, { value: tsData.actual2 }, { value: pnData.actual2 }, { value: vnData.actual2 }, { value: rcData.actual2 }];
 
             }
