@@ -27,13 +27,13 @@ $sql = "SELECT
 FROM
     perolehan
 WHERE
-    week = '41'
+    week = '{$_POST['week']}'
         AND tanggal = (SELECT 
             tanggal
         FROM
             perolehan
         GROUP BY tanggal , week
-        HAVING SUM(actual) > 0 AND week = '41'
+        HAVING SUM(actual) > 0 AND week = '{$_POST['week']}'
         ORDER BY tanggal DESC
         LIMIT 1)
 GROUP BY tipe_produk , week , tanggal";
