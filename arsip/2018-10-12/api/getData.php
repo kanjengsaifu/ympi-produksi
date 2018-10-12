@@ -1,6 +1,5 @@
 <?php
 include "conn.php";
-include "inc/chromePhp.php"
 
 // $query = $db->query("SELECT * FROM perolehan WHERE week = '{$_POST['week']}'");
 //$query = $db->query("SELECT week, MAX(tanggal) as tanggal, tipe_produk, plan, actual FROM perolehan WHERE week = '{$_POST['week']}' GROUP BY tipe_produk");
@@ -17,7 +16,7 @@ $query = $db->query("SELECT
         ((SUM(plan) - SUM(actual)) / SUM(plan))*100,
         0) AS plan2,
     IF(SUM(actual) > 0,
-        ((SUM(actual) - (SUM(IF((actual - plan) > 0) + (SUM(IF((actual - plan) < 0),
+        ((SUM(actual) - SUM(IF((actual - plan) > 0,
             actual - plan,
             0))) / SUM(plan))*100,
         0) AS actual2
@@ -25,17 +24,8 @@ FROM
     perolehan
 WHERE
     week = 41
-        AND tanggal = (SELECT 
-            tanggal
-        FROM
-            perolehan
-        GROUP BY tanggal , week
-        HAVING SUM(actual) > 0 AND week = 41
-        ORDER BY tanggal DESC
-        LIMIT 1)
+        AND tanggal = '2018-10-12'
 GROUP BY tipe_produk , week , tanggal");
-
-ChromePhp::log($sql);
 
 $rows = array();
 
