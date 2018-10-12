@@ -15,23 +15,25 @@ $sql = "SELECT
     SUM(plan) AS plan,
     SUM(actual) AS actual,
     IF((SUM(plan) - SUM(actual)) / SUM(plan) > 0,
-        ((SUM(plan) - SUM(actual)) / SUM(plan))*100,
+        ((SUM(plan) - SUM(actual)) / SUM(plan)) * 100,
         0) AS plan2,
     IF(SUM(actual) > 0,
         ((SUM(actual) - SUM(IF((actual - plan) > 0,
             actual - plan,
-            0))) / SUM(plan))*100,
+            0)) + SUM(IF((actual - plan) < 0,
+            actual - plan,
+            0))) / SUM(plan)) * 100,
         0) AS actual2
 FROM
     perolehan
 WHERE
-    week = '{$_POST['week']}'
+    week = '41'
         AND tanggal = (SELECT 
             tanggal
         FROM
             perolehan
         GROUP BY tanggal , week
-        HAVING SUM(actual) > 0 AND week = '{$_POST['week']}'
+        HAVING SUM(actual) > 0 AND week = '41'
         ORDER BY tanggal DESC
         LIMIT 1)
 GROUP BY tipe_produk , week , tanggal";
