@@ -343,8 +343,8 @@ var renderMainChart = function(data) {
 // Render extended chart Fn
 var renderExtChart = function(data) {
     // un-hide buttons
-    $('#btn-close').removeClass('d-none');
-    $('#open-ws-1').removeClass('d-none');
+    $('#btn-close, #btn-ws').removeClass('d-none');
+    $('#open-ws-1, #open-ws-2').addClass('d-none');
 
     // hide chart #2 container, chart #1 title, marquee & tabs
     $('#chart-2, #kop, #title-chart-1, .nav').addClass('d-none');
@@ -523,7 +523,6 @@ var showChart = function(w) {
             week: w
         },
         success: function(response) {
-            console.log(response);
             $('#hidden-week').val(w);
             $('#hidden-date').val(response.result[0].tanggal);
 

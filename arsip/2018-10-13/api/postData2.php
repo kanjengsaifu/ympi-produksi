@@ -1,0 +1,24 @@
+<?php
+include "conn.php";
+include "inc/chromePhp.php";
+
+// ChromePhp::log($_POST['tanggal']);
+
+if (!empty($_POST['tanggal'])) {
+    $query = $db->query("SELECT * FROM perolehan WHERE tanggal = '{$_POST['tanggal']}' AND (tipe_produk = 'pn' OR tipe_produk = 'rc' OR tipe_produk = 'vn')");
+    $rows = array();
+
+    if ($query->num_rows > 0) {
+        while ($r = mysqli_fetch_assoc($query)) {
+            $rows[] = $r;
+        }
+        $data['status'] = 'ok';
+        $data['result'] = $rows;
+    } else {
+        $data['status'] = 'err';
+        $data['result'] = '';
+    }
+
+    //returns data as JSON format
+    echo json_encode($data);
+}
