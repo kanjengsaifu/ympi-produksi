@@ -4,8 +4,18 @@ include "inc/chromePhp.php";
 
 // ChromePhp::log($_POST['tanggal']);
 
-if (!empty($_POST['tanggal'])) {
-    $query = $db->query("SELECT * FROM perolehan WHERE tanggal = '{$_POST['tanggal']}' AND (tipe_produk = 'pn' OR tipe_produk = 'rc' OR tipe_produk = 'vn')");
+if (isset($_POST['data_date'])) {
+    $sql = "SELECT 
+                tipe_produk,
+                sum(IF(actual - plan > 0, actual - plan, 0)) AS diff_plus,
+                sum(IF(actual - plan < 0, actual - plan, 0)) AS diff_minus
+            FROM
+                perolehan
+            WHERE
+                tanggal = '{$_POST['data_date']}'
+            group by tipe_produk";
+
+    $query = $db->query($sql);
     $rows = array();
 
     if ($query->num_rows > 0) {

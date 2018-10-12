@@ -79,12 +79,12 @@
             <a href="http://172.17.128.127/ympi-produksi/arsip/2018-10-12"><font size="2" font face="meiryo" color="blue">2018-10-12</font></a>&nbsp &nbsp &nbsp
             <a href="http://172.17.128.127/ympi-produksi/arsip/2018-10-13"><font size="2" font face="meiryo" color="blue">2018-10-13</font></a>
             <div class="btn-group float-right" role="group">
-                <!-- <button type="button" class="btn btn-default" id="open-ws-1">
-                    <font color="0000FF" size="2"><b>Weekly Shipping Chart (週次出荷コンテナー別)</b></font> <i class="fa fa-arrow-right"></i>
-                </button> -->
                 <button type="button" class="btn btn-default" id="open-ws-1">
                     <font color="0000FF" size="2"><b>Weekly Shipping Chart (週次出荷コンテナー別)</b></font>
                     </font><i class="fa fa-arrow-right"></i>
+                </button>
+                <button type="button" class="btn btn-default" id="open-ext-chart">
+                    <font color="0000FF" size="2"><b>Kesesuaian Item (週次出荷コンテナー別)</b></font> <i class="fa fa-arrow-right"></i>
                 </button>
             </div>
             <!-- <div class="col-12 d-none pt-3" id="chart-2">
@@ -350,7 +350,7 @@
                             // hide/show related button
                             $('#btn-close').removeClass('d-none');
                             // hide WS button
-                            $('#open-ws-1, #open-ws-2').addClass('d-none');
+                            $('#open-ws-1, #open-ext-chart').addClass('d-none');
 
                             // Function to get the latest date
                             function getLatestDate(data) {
@@ -509,14 +509,13 @@
             });
 
             // Button WS Chart 2
-            $('#open-ws-2').click(function() {
+            $('#open-ext-chart').click(function() {
                 $.ajax({
                     type: 'POST',
-                    url: 'api/postWsIndex.php',
+                    url: 'api/postData2.php',
                     dataType: "json",
                     data: {
-                        data_type: "PN",
-                        data_week: $('#hidden-week').val()
+                        data_date: $('#hidden-date').val()
                     },
                     success: function(response) {
                         if (response.status == 'ok') {
@@ -529,57 +528,108 @@
                             // hide/show related button
                             $('#btn-close').removeClass('d-none');
                             // hide WS button
-                            $('#open-ws-1, #open-ws-2').addClass('d-none');
+                            $('#open-ws-1, #open-ext-chart').addClass('d-none');
 
-                            // Function to get the latest date
-                            function getLatestDate(data) {
-                                var maxNumb = [];
-                                for (var y = 0; y < data.data.length; y++) {
-                                    maxNumb.push(new Date(data.data[y].tanggal));
-                                }
-                                var latestDate = moment(new Date(Math.max.apply(null, maxNumb))).format('YYYY-MM-DD');
-                                return latestDate;
-                            }
 
                             // Populate dataset
                             var dataSet = [],
-                                dataCat = [],
-                                totPlan = [],
-                                totAct = [];
-                            var rawData = response.result;
+                                dataCat = [];
 
-                            var sortedData = sortWsDataIndex(rawData);
+                            dataCat.push({
+                                "label": "FLUTE"
+                            }, {
+                                "label": "CLARINET"
+                            }, {
+                                "label": "ALTO SAX"
+                            }, {
+                                "label": "TENOR SAX"
+                            }, {
+                                "label": "PIANICA"
+                            }, {
+                                "label": "RECORDER"
+                            }, {
+                                "label": "VENOVA"
+                            });
 
-                            sortedData.forEach(function(dt) {
-                                dataCat.push({
-                                    "label": dt.tipe_produk.toUpperCase()
-                                });
-
-                                var d = dt.data;
-                                var tempPlan = 0,
-                                    tempAct = 0;
-                                d.forEach(function(val) {
-                                    tempPlan += parseInt(val.plan);
-                                    tempAct += parseInt(val.actual);
-                                })
-
-                                totPlan.push({ "value": tempPlan - tempPlan })
-                                totAct.push({ "value": tempAct });
+                            var data = response.result;
+                            console.log(data);
+                            var flDiffPlus, flDiffMin, clDiffPlus, clDiffMin, asDiffPlus, asDiffMin, tsDiffPlus, tsDiffMin, pnDiffPlus, pnDiffMin, rcDiffPlus, rcDiffMin, vnDiffPlus, vnDiffMin;
+                            
+                            data.forEach(function(dt) {
+                                // console.log(dt);
+                                switch (dt.tipe_produk) {
+                                    case 'fl':
+                                        flDiffPlus = dt.diff_plus;
+                                        flDiffMin = dt.diff_minus;
+                                        break;
+                                    case 'cl':
+                                        clDiffPlus = dt.diff_plus;
+                                        clDiffMin = dt.diff_minus;
+                                        break;
+                                    case 'as':
+                                        asDiffPlus = dt.diff_plus;
+                                        asDiffMin = dt.diff_minus;
+                                        break;
+                                    case 'ts':
+                                        tsDiffPlus = dt.diff_plus;
+                                        tsDiffMin = dt.diff_minus;
+                                        break;
+                                    case 'pn':
+                                        pnDiffPlus = dt.diff_plus;
+                                        pnDiffMin = dt.diff_minus;
+                                        break;
+                                    case 'rc':
+                                        rcDiffPlus = dt.diff_plus;
+                                        rcDiffMin = dt.diff_minus;
+                                        break;
+                                    default:
+                                        vnDiffPlus = dt.diff_plus;
+                                        vnDiffMin = dt.diff_minus;
+                                        break;
+                                }
                             });
 
                             dataSet = [{
-                                "seriesname": "Completed",
+                                "seriesname": "Diff +",
                                 "color": "008000",
-                                "data": totAct
+                                "data": [{
+                                    "value": flDiffPlus
+                                }, {
+                                    "value": clDiffPlus
+                                }, {
+                                    "value": asDiffPlus
+                                }, {
+                                    "value": tsDiffPlus
+                                }, {
+                                    "value": pnDiffPlus
+                                }, {
+                                    "value": rcDiffPlus
+                                }, {
+                                    "value": vnDiffPlus
+                                }]
                             }, {
-                                "seriesname": "Uncompleted",
+                                "seriesname": "Diff -",
                                 "color": "FFD700",
-                                "data": totPlan
+                                "data": [{
+                                    "value": flDiffMin
+                                }, {
+                                    "value": clDiffMin
+                                }, {
+                                    "value": asDiffMin
+                                }, {
+                                    "value": tsDiffMin
+                                }, {
+                                    "value": pnDiffMin
+                                }, {
+                                    "value": rcDiffMin
+                                }, {
+                                    "value": vnDiffMin
+                                }]
                             }];
 
                             // Render WS chart EDIN
                             $('#chart-container-1').insertFusionCharts({
-                                type: 'scrollstackedcolumn2d',
+                                type: 'mscolumn2d',
                                 width: 1120,
                                 height: 440,
                                 dataFormat: 'json',
@@ -589,7 +639,7 @@
                                         "captionFontSize": "20",
                                         "CaptionFontColor": "0000FF",
                                         "CaptionFontBold": "1",
-                                        "subCaption": "Week " + $('#hidden-week').val(),
+                                        "subCaption": "Date " + $('#hidden-date').val(),
                                         "subcaptionFontSize": "20",
                                         "subCaptionFontBold": "1",
                                         "subCaptionFontColor": "008000",
@@ -598,17 +648,17 @@
                                         "xAxisName": "Produk",
                                         "yAxisName": "Total Completion",
                                         "theme": "fusion",
-                                        "stack100percent": "1",
+                                        // "stack100percent": "1",
                                         "plotSpacePercent": "50",
-                                        "decimals": "0",
+                                        "decimals": "1",
                                         "plotFillAlpha": "50",
                                         "divLineIsDashed": "1",
                                         "divLineDashLen": "1",
                                         "divLineGapLen": "5",
                                         "showValues": "1",
-                                        "valueFontSize": "40",
+                                        "valueFontSize": "15",
                                         "valueFontBold": "1",
-                                        "numberSuffix": "%",
+                                        // "numberSuffix": "%",
                                         "bgColor": "#DDDDDD",
                                         "bgAlpha": "50",
                                         "id": 'main-chart'

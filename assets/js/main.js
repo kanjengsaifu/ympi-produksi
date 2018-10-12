@@ -16,7 +16,7 @@ var numberWithCommas = function(nStr) {
 var renderMainChart = function(data) {
     // hide buttons
     $('#btn-close, #btn-ws').addClass('d-none');
-    $('#open-ws-1, #open-ws-2').removeClass('d-none');
+    $('#open-ws-1, #open-ext-chart').removeClass('d-none');
 
     // Un-hide chart #2 container & reset Tabs
     $('#chart-2').removeClass('d-none');
