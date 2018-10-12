@@ -38,7 +38,7 @@ WHERE
         LIMIT 1)
 GROUP BY tipe_produk , week , tanggal";
 
-ChromePhp::log($sql);
+// ChromePhp::log($sql);
 
 $query = $db->query($sql);
 $rows = array();

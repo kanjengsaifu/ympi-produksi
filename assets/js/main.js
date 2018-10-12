@@ -91,334 +91,15 @@ var renderMainChart = function(data) {
         },
         "events": {
             "dataPlotClick": function(eventObj, dataObj) {
+                var tipe_produk = dataObj.categoryLabel;
                 var finalData = {}
                 $.ajax({
                     type: 'POST',
                     url: 'api/postData.php',
                     dataType: "json",
                     data: {
-                        tanggal: $('#hidden-date').val()
-
-                    },
-                    success: function(res) {
-                        var rawObj = res.result;
-
-                        // Find each product's diff
-                        var flDiffPlus = 0,
-                            flDiffMin = 0,
-                            clDiffPlus = 0,
-                            clDiffMin = 0,
-                            asDiffPlus = 0,
-                            asDiffMin = 0,
-                            tsDiffPlus = 0,
-                            tsDiffMin = 0,
-                            pnDiffPlus = 0,
-                            pnDiffMin = 0,
-                            vnDiffPlus = 0,
-                            vnDiffMin = 0,
-                            rcDiffPlus = 0,
-                            rcDiffMin = 0;
-
-                        rawObj.forEach(function(dt) {
-                            if (dt.tipe_produk == 'fl') {
-                                var flCalc = dt.actual - dt.plan;
-                                if (flCalc > 0) flDiffPlus += flCalc;
-                                else flDiffMin += flCalc;
-                            }
-
-                            if (dt.tipe_produk == 'cl') {
-                                var clCalc = dt.actual - dt.plan;
-                                if (clCalc > 0) clDiffPlus += clCalc;
-                                else clDiffMin += clCalc;
-                            }
-
-                            if (dt.tipe_produk == 'as') {
-                                var asCalc = dt.actual - dt.plan;
-                                if (asCalc > 0) asDiffPlus += asCalc;
-                                else asDiffMin += asCalc;
-                            }
-
-                            if (dt.tipe_produk == 'ts') {
-                                var tsCalc = dt.actual - dt.plan;
-                                if (tsCalc > 0) tsDiffPlus += tsCalc;
-                                else tsDiffMin += tsCalc;
-                            }
-
-                            if (dt.tipe_produk == 'pn') {
-                                var pnCalc = dt.actual - dt.plan;
-                                if (pnCalc > 0) pnDiffPlus += pnCalc;
-                                else pnDiffMin += pnCalc;
-                            }
-
-                            if (dt.tipe_produk == 'vn') {
-                                var vnCalc = dt.actual - dt.plan;
-                                if (vnCalc > 0) vnDiffPlus += vnCalc;
-                                else vnDiffMin += vnCalc;
-                            }
-
-                            if (dt.tipe_produk == 'rc') {
-                                var rcCalc = dt.actual - dt.plan;
-                                if (rcCalc > 0) rcDiffPlus += rcCalc;
-                                else rcDiffMin += rcCalc;
-                            }
-                        })
-
-                        // Populate datas
-                        finalData.tanggal = dataObj.categoryLabel;
-                        finalData.categories = [{
-                            "label": "FL"
-                        }, {
-                            "label": "CL"
-                        }, {
-                            "label": "AS"
-                        }, {
-                            "label": "TS"
-                        }, {
-                            "label": "PN"
-                        }, {
-                            "label": "VN"
-                        }, {
-                            "label": "RC"
-                        }];
-
-                        finalData.surplus = [{
-                            "value": flDiffPlus
-                        }, {
-                            "value": clDiffPlus
-                        }, {
-                            "value": asDiffPlus
-                        }, {
-                            "value": tsDiffPlus
-                        }, {
-                            "value": pnDiffPlus
-                        }, {
-                            "value": vnDiffPlus
-                        }, {
-                            "value": rcDiffPlus
-                        }];
-
-                        finalData.minus = [{
-                            "value": flDiffMin
-                        }, {
-                            "value": clDiffMin
-                        }, {
-                            "value": asDiffMin
-                        }, {
-                            "value": tsDiffMin
-                        }, {
-                            "value": pnDiffMin
-                        }, {
-                            "value": vnDiffMin
-                        }, {
-                            "value": rcDiffMin
-                        }];
-
-                        // Render the Extended Chart
-                        renderExtChart(finalData);
-                    }
-                })
-            }
-        }
-    });
-
-    // Chart #2
-    // $('#chart-container-2').insertFusionCharts({
-    //     type: 'scrollstackedcolumn2d',
-    //     width: 1200,
-    //     height: 230,
-    //     dataFormat: 'json',
-    //     dataSource: {
-    //         "chart": {
-    //             "caption": "Daily Production 日次生産 (Educational Instrument)",
-    //             "CaptionFontBold": "1",
-    //             "CaptionFontColor": "008000",
-    //             "captionFontSize": "15",
-    //             // "subCaptionFontSize": "25",
-    //             "baseFont": "Meiryo",
-    //             //"yAxisName": "Pencapaian 達成",
-    //             "theme": "fusion",
-    //             "stack100percent": "1",
-    //             "decimals": "1",
-    //             "plotFillAlpha": "80",
-    //             "divLineIsDashed": "1",
-    //             "divLineDashLen": "1",
-    //             "divLineGapLen": "1",
-    //             "showValues": "1",
-    //             "valueFontBold": "1",
-    //             "bgColor": "#DDDDDD",
-    //             "bgAlpha": "50",
-    //             "valueFontSize": "12"
-    //         },
-    //         "categories": [{
-    //             "category": data.categories
-    //         }],
-    //         "dataset": [{
-    //                 "seriesname": "Actual",
-    //                 "color": "483D8B",
-    //                 "data": data.plan_2
-    //             },
-    //             {
-    //                 "seriesname": "Minus",
-    //                 "color": "F0E68C",
-    //                 "data": data.actual_2
-    //             }
-    //         ]
-    //     },
-    //     "events": {
-    //         "dataPlotClick": function(eventObj, dataObj) {
-    //             var finalData = {}
-    //             $.ajax({
-    //                 type: 'POST',
-    //                 url: 'api/postData2.php',
-    //                 dataType: "json",
-    //                 data: {
-    //                     tanggal: moment(dataObj.categoryLabel).format('YYYY-MM-DD')
-    //                 },
-    //                 success: function(res) {
-    //                     var rawObj = res.result;
-
-    //                     // Find each product's diff
-    //                     var pnDiffPlus = 0,
-    //                         pnDiffMin = 0,
-    //                         rcDiffPlus = 0,
-    //                         rcDiffMin = 0,
-    //                         vnDiffPlus = 0,
-    //                         vnDiffMin = 0;
-
-    //                     rawObj.forEach(function(dt) {
-    //                         if (dt.tipe_produk == 'pn') {
-    //                             var pnCalc = dt.actual - dt.plan;
-    //                             if (pnCalc > 0) pnDiffPlus += pnCalc;
-    //                             else pnDiffMin += pnCalc;
-    //                         }
-
-    //                         if (dt.tipe_produk == 'rc') {
-    //                             var rcCalc = dt.actual - dt.plan;
-    //                             if (rcCalc > 0) rcDiffPlus += rcCalc;
-    //                             else rcDiffMin += rcCalc;
-    //                         }
-
-    //                         if (dt.tipe_produk == 'vn') {
-    //                             var vnCalc = dt.actual - dt.plan;
-    //                             if (vnCalc > 0) vnDiffPlus += vnCalc;
-    //                             else vnDiffMin += vnCalc;
-    //                         }
-    //                     })
-
-    //                     // Populate datas
-    //                     finalData.tanggal = dataObj.categoryLabel;
-    //                     finalData.categories = [{
-    //                         "label": "PN"
-    //                     }, {
-    //                         "label": "RC"
-    //                     }, {
-    //                         "label": "VN"
-    //                     }];
-
-    //                     finalData.surplus = [{
-    //                         "value": pnDiffPlus
-    //                     }, {
-    //                         "value": rcDiffPlus
-    //                     }, {
-    //                         "value": vnDiffPlus
-    //                     }];
-
-    //                     finalData.minus = [{
-    //                         "value": pnDiffMin
-    //                     }, {
-    //                         "value": rcDiffMin
-    //                     }, {
-    //                         "value": vnDiffMin
-    //                     }];
-
-    //                     // Render the Extended Chart
-    //                     renderExtChart(finalData);
-    //                 }
-    //             })
-    //         }
-    //     }
-    // });
-}
-
-// Render extended chart Fn
-var renderExtChart = function(data) {
-    // un-hide buttons
-    $('#btn-close').removeClass('d-none');
-    $('#open-ws-1').removeClass('d-none');
-
-    // hide chart #2 container, chart #1 title, marquee & tabs
-    $('#chart-2, #kop, #title-chart-1, .nav').addClass('d-none');
-
-    // Set chart title
-    $('#chart-title-1').addClass('d-none');
-
-    // save respected value on a hidden fields
-    // $('#hidden-date').val(moment(data.tanggal).format('YYYY-MM-DD'));
-    $('#hidden-type').val(data.categories[0].label);
-
-    // main action
-    $('#chart-container-1').insertFusionCharts({
-        type: 'mscolumn2d',
-        width: 1120,
-        height: 520,
-        dataFormat: 'json',
-        dataSource: {
-            "chart": {
-                "caption": "Kesesuaian Per Item 部品ごとの適合性",
-                "captionFontSize": "30",
-                "captionFont": "Arial Black",
-                "CaptionFontBold": "1",
-                "CaptionFontColor": "0000FF",
-                "subCaption": moment($('#hidden-date').val()).format('DD MMMM YYYY'),
-                "subcaptionFontSize": "20",
-                "subCaptionFontColor": "008000",
-                "subCaptionFontBold": "1",
-                "plotSpacePercent": "25",
-                "baseFont": "Arial Black",
-                "baseFontSize": "20",
-                "baseFontColor": "000000",
-                "yAxisName": "Perolehan",
-                "theme": "fusion",
-                "plotFillAlpha": "50",
-                "divLineIsDashed": "1",
-                "divLineDashLen": "1",
-                "divLineGapLen": "1",
-                "showValues": "1",
-                "valueFontSize": "30",
-                "valueFont": "Arial Black",
-                "valueFontColor": "0000FF",
-                "valueFontBold": "1",
-                "bgColor": "E0FFFF",
-                "bgAlpha": "50",
-                "id": 'main-chart'
-            },
-            "categories": [{
-                "category": data.categories
-            }],
-            "dataset": [{
-                    "seriesname": "Plus",
-                    "color": "008000",
-                    "data": data.surplus
-                },
-                {
-                    "seriesname": "Minus",
-                    "color": "FF0000",
-                    "data": data.minus
-                }
-            ]
-        },
-        "events": {
-            "dataPlotClick": function(eventObj, dataObj) {
-                // Show popup ONLY for FL,CL,AS,TS products:
-                // if (dataObj.categoryLabel == 'FL' || dataObj.categoryLabel == 'CL' || dataObj.categoryLabel == 'AS' || dataObj.categoryLabel == 'TS') {
-                // Call table data API
-                $.ajax({
-                    type: 'POST',
-                    url: 'api/postDetail.php',
-                    dataType: "json",
-                    data: {
-                        data_type: dataObj.categoryLabel,
-                        data_date: $('#hidden-date').val()
+                        tanggal: $('#hidden-date').val(),
+                        tipe_produk: tipe_produk
                     },
                     success: function(res) {
                         $('#modal-title').html('Kesesuaian Per Item 部品ごとの適合性: ' + dataObj.categoryLabel);
@@ -426,6 +107,9 @@ var renderExtChart = function(data) {
 
                         // clear the table
                         $("#table-data").html('');
+
+                        var rawObj = res.result;
+                        console.log(rawObj);
 
                         if (res.status == 'ok') {
                             var totPlan = 0,
@@ -439,7 +123,12 @@ var renderExtChart = function(data) {
                                 else var diffPlus = diff,
                                     diffMin = 0;
 
-                                $("#table-data").append("<tr><td>" + value.gmc + "</td><td>" + value.description + "</td><td class='text-right'>" + numberWithCommas(value.plan) + "</td><td class='text-right'>" + numberWithCommas(value.actual) + "</td><td class='text-right'>" + numberWithCommas(diffPlus) + "</td><td class='text-right'>" + numberWithCommas(diffMin) + "</td></tr>");
+                                var elem = '';
+                                if (diffPlus != 0 || diffMin != 0) {
+                                    elem += "<tr><td>" + value.gmc + "</td><td>" + value.description + "</td><td class='text-right'>" + numberWithCommas(value.plan) + "</td><td class='text-right'>" + numberWithCommas(value.actual) + "</td><td class='text-right'>" + numberWithCommas(diffPlus) + "</td><td class='text-right'>" + numberWithCommas(diffMin) + "</td></tr>";
+                                }
+
+                                $("#table-data").append(elem);
 
                                 totPlan += parseInt(value.plan);
                                 totAct += parseInt(value.actual);
@@ -464,13 +153,149 @@ var renderExtChart = function(data) {
                         } else {
                             $('#modal-error').modal('show');
                         }
+
+                        // Render the Extended Chart
+                        // renderExtChart(finalData);
+                        // Show the MODAL
+                        $('#modal').modal('show');
                     }
                 })
-                // }
             }
         }
     });
 }
+
+// Render extended chart Fn
+// var renderExtChart = function(data) {
+//     // un-hide buttons
+//     $('#btn-close').removeClass('d-none');
+//     $('#open-ws-1').removeClass('d-none');
+
+//     // hide chart #2 container, chart #1 title, marquee & tabs
+//     $('#chart-2, #kop, #title-chart-1, .nav').addClass('d-none');
+
+//     // Set chart title
+//     $('#chart-title-1').addClass('d-none');
+
+//     // save respected value on a hidden fields
+//     // $('#hidden-date').val(moment(data.tanggal).format('YYYY-MM-DD'));
+//     $('#hidden-type').val(data.categories[0].label);
+
+//     // main action
+//     $('#chart-container-1').insertFusionCharts({
+//         type: 'mscolumn2d',
+//         width: 1120,
+//         height: 520,
+//         dataFormat: 'json',
+//         dataSource: {
+//             "chart": {
+//                 "caption": "Kesesuaian Per Item 部品ごとの適合性",
+//                 "captionFontSize": "30",
+//                 "captionFont": "Arial Black",
+//                 "CaptionFontBold": "1",
+//                 "CaptionFontColor": "0000FF",
+//                 "subCaption": moment($('#hidden-date').val()).format('DD MMMM YYYY'),
+//                 "subcaptionFontSize": "20",
+//                 "subCaptionFontColor": "008000",
+//                 "subCaptionFontBold": "1",
+//                 "plotSpacePercent": "25",
+//                 "baseFont": "Arial Black",
+//                 "baseFontSize": "20",
+//                 "baseFontColor": "000000",
+//                 "yAxisName": "Perolehan",
+//                 "theme": "fusion",
+//                 "plotFillAlpha": "50",
+//                 "divLineIsDashed": "1",
+//                 "divLineDashLen": "1",
+//                 "divLineGapLen": "1",
+//                 "showValues": "1",
+//                 "valueFontSize": "30",
+//                 "valueFont": "Arial Black",
+//                 "valueFontColor": "0000FF",
+//                 "valueFontBold": "1",
+//                 "bgColor": "E0FFFF",
+//                 "bgAlpha": "50",
+//                 "id": 'main-chart'
+//             },
+//             "categories": [{
+//                 "category": data.categories
+//             }],
+//             "dataset": [{
+//                     "seriesname": "Plus",
+//                     "color": "008000",
+//                     "data": data.surplus
+//                 },
+//                 {
+//                     "seriesname": "Minus",
+//                     "color": "FF0000",
+//                     "data": data.minus
+//                 }
+//             ]
+//         },
+//         "events": {
+//             "dataPlotClick": function(eventObj, dataObj) {
+//                 // Show popup ONLY for FL,CL,AS,TS products:
+//                 // if (dataObj.categoryLabel == 'FL' || dataObj.categoryLabel == 'CL' || dataObj.categoryLabel == 'AS' || dataObj.categoryLabel == 'TS') {
+//                 // Call table data API
+//                 $.ajax({
+//                     type: 'POST',
+//                     url: 'api/postDetail.php',
+//                     dataType: "json",
+//                     data: {
+//                         data_type: dataObj.categoryLabel,
+//                         data_date: $('#hidden-date').val()
+//                     },
+//                     success: function(res) {
+//                         $('#modal-title').html('Kesesuaian Per Item 部品ごとの適合性: ' + dataObj.categoryLabel);
+//                         $("#table-tgl").html(moment($('#hidden-date').val()).format('DD MMMM YYYY'));
+
+//                         // clear the table
+//                         $("#table-data").html('');
+
+//                         if (res.status == 'ok') {
+//                             var totPlan = 0,
+//                                 totAct = 0,
+//                                 totDiffPlus = 0,
+//                                 totDiffMin = 0;
+//                             $.each(res.result, function(key, value) {
+//                                 var diff = value.actual - value.plan;
+//                                 if (diff < 0) var diffMin = diff,
+//                                     diffPlus = 0;
+//                                 else var diffPlus = diff,
+//                                     diffMin = 0;
+
+//                                 $("#table-data").append("<tr><td>" + value.gmc + "</td><td>" + value.description + "</td><td class='text-right'>" + numberWithCommas(value.plan) + "</td><td class='text-right'>" + numberWithCommas(value.actual) + "</td><td class='text-right'>" + numberWithCommas(diffPlus) + "</td><td class='text-right'>" + numberWithCommas(diffMin) + "</td></tr>");
+
+//                                 totPlan += parseInt(value.plan);
+//                                 totAct += parseInt(value.actual);
+//                                 totDiffPlus += parseInt(diffPlus);
+//                                 totDiffMin += parseInt(diffMin);
+//                             })
+
+//                             // Format the numbers
+//                             totPlan = numberWithCommas(totPlan);
+//                             totAct = numberWithCommas(totAct);
+//                             totDiffPlus = numberWithCommas(totDiffPlus);
+//                             totDiffMin = numberWithCommas(totDiffMin);
+
+//                             // append the Qty total
+//                             $('#table-total-plan').html(totPlan);
+//                             $('#table-total-actual').html(totAct);
+//                             $('#table-total-diff-plus').html(totDiffPlus);
+//                             $('#table-total-diff-minus').html(totDiffMin);
+
+//                             // Show the MODAL
+//                             $('#modal').modal('show');
+//                         } else {
+//                             $('#modal-error').modal('show');
+//                         }
+//                     }
+//                 })
+//                 // }
+//             }
+//         }
+//     });
+// }
 
 // Call API for Main Chart Fn
 var initiateData = function() {
@@ -524,7 +349,6 @@ var showChart = function(w) {
             week: w
         },
         success: function(response) {
-            console.log(response);
             $('#hidden-week').val(w);
             $('#hidden-date').val(response.result[0].tanggal);
 
@@ -582,8 +406,6 @@ var showChart = function(w) {
                 "plan": dataPlan,
                 "actual": dataActual,
             };
-
-            console.log(finalData);
 
             renderMainChart(finalData);
         }
