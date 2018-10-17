@@ -30,7 +30,7 @@ var renderMainChart = function(data) {
         type: 'scrollstackedcolumn2d',
         renderAt: "chart-container",
         width: 1120,
-        height: 380,
+        height: 310,
         dataFormat: 'json',
         dataSource: {
             "chart": {
@@ -55,7 +55,7 @@ var renderMainChart = function(data) {
                 "theme": "fusion",
                 "stack100percent": "1",
                 "decimals": "0",
-                "plotSpacePercent": "30",
+                "plotSpacePercent": "35",
                 "plotFillAlpha": "30",
                 "divLineIsDashed": "1",
                 "divLineDashLen": "1",
@@ -165,145 +165,12 @@ var renderMainChart = function(data) {
     });
 }
 
-// Render extended chart Fn
-// var renderExtChart = function(data) {
-//     // un-hide buttons
-//     $('#btn-close').removeClass('d-none');
-//     $('#open-ws-1').removeClass('d-none');
-
-//     // hide chart #2 container, chart #1 title, marquee & tabs
-//     $('#chart-2, #kop, #title-chart-1, .nav').addClass('d-none');
-
-//     // Set chart title
-//     $('#chart-title-1').addClass('d-none');
-
-//     // save respected value on a hidden fields
-//     // $('#hidden-date').val(moment(data.tanggal).format('YYYY-MM-DD'));
-//     $('#hidden-type').val(data.categories[0].label);
-
-//     // main action
-//     $('#chart-container-1').insertFusionCharts({
-//         type: 'mscolumn2d',
-//         width: 1120,
-//         height: 520,
-//         dataFormat: 'json',
-//         dataSource: {
-//             "chart": {
-//                 "caption": "Kesesuaian Per Item 部品ごとの適合性",
-//                 "captionFontSize": "30",
-//                 "captionFont": "Arial Black",
-//                 "CaptionFontBold": "1",
-//                 "CaptionFontColor": "0000FF",
-//                 "subCaption": moment($('#hidden-date').val()).format('DD MMMM YYYY'),
-//                 "subcaptionFontSize": "20",
-//                 "subCaptionFontColor": "008000",
-//                 "subCaptionFontBold": "1",
-//                 "plotSpacePercent": "25",
-//                 "baseFont": "Arial Black",
-//                 "baseFontSize": "20",
-//                 "baseFontColor": "000000",
-//                 "yAxisName": "Perolehan",
-//                 "theme": "fusion",
-//                 "plotFillAlpha": "50",
-//                 "divLineIsDashed": "1",
-//                 "divLineDashLen": "1",
-//                 "divLineGapLen": "1",
-//                 "showValues": "1",
-//                 "valueFontSize": "30",
-//                 "valueFont": "Arial Black",
-//                 "valueFontColor": "0000FF",
-//                 "valueFontBold": "1",
-//                 "bgColor": "E0FFFF",
-//                 "bgAlpha": "50",
-//                 "id": 'main-chart'
-//             },
-//             "categories": [{
-//                 "category": data.categories
-//             }],
-//             "dataset": [{
-//                     "seriesname": "Plus",
-//                     "color": "008000",
-//                     "data": data.surplus
-//                 },
-//                 {
-//                     "seriesname": "Minus",
-//                     "color": "FF0000",
-//                     "data": data.minus
-//                 }
-//             ]
-//         },
-//         "events": {
-//             "dataPlotClick": function(eventObj, dataObj) {
-//                 // Show popup ONLY for FL,CL,AS,TS products:
-//                 // if (dataObj.categoryLabel == 'FL' || dataObj.categoryLabel == 'CL' || dataObj.categoryLabel == 'AS' || dataObj.categoryLabel == 'TS') {
-//                 // Call table data API
-//                 $.ajax({
-//                     type: 'POST',
-//                     url: 'api/postDetail.php',
-//                     dataType: "json",
-//                     data: {
-//                         data_type: dataObj.categoryLabel,
-//                         data_date: $('#hidden-date').val()
-//                     },
-//                     success: function(res) {
-//                         $('#modal-title').html('Kesesuaian Per Item 部品ごとの適合性: ' + dataObj.categoryLabel);
-//                         $("#table-tgl").html(moment($('#hidden-date').val()).format('DD MMMM YYYY'));
-
-//                         // clear the table
-//                         $("#table-data").html('');
-
-//                         if (res.status == 'ok') {
-//                             var totPlan = 0,
-//                                 totAct = 0,
-//                                 totDiffPlus = 0,
-//                                 totDiffMin = 0;
-//                             $.each(res.result, function(key, value) {
-//                                 var diff = value.actual - value.plan;
-//                                 if (diff < 0) var diffMin = diff,
-//                                     diffPlus = 0;
-//                                 else var diffPlus = diff,
-//                                     diffMin = 0;
-
-//                                 $("#table-data").append("<tr><td>" + value.gmc + "</td><td>" + value.description + "</td><td class='text-right'>" + numberWithCommas(value.plan) + "</td><td class='text-right'>" + numberWithCommas(value.actual) + "</td><td class='text-right'>" + numberWithCommas(diffPlus) + "</td><td class='text-right'>" + numberWithCommas(diffMin) + "</td></tr>");
-
-//                                 totPlan += parseInt(value.plan);
-//                                 totAct += parseInt(value.actual);
-//                                 totDiffPlus += parseInt(diffPlus);
-//                                 totDiffMin += parseInt(diffMin);
-//                             })
-
-//                             // Format the numbers
-//                             totPlan = numberWithCommas(totPlan);
-//                             totAct = numberWithCommas(totAct);
-//                             totDiffPlus = numberWithCommas(totDiffPlus);
-//                             totDiffMin = numberWithCommas(totDiffMin);
-
-//                             // append the Qty total
-//                             $('#table-total-plan').html(totPlan);
-//                             $('#table-total-actual').html(totAct);
-//                             $('#table-total-diff-plus').html(totDiffPlus);
-//                             $('#table-total-diff-minus').html(totDiffMin);
-
-//                             // Show the MODAL
-//                             $('#modal').modal('show');
-//                         } else {
-//                             $('#modal-error').modal('show');
-//                         }
-//                     }
-//                 })
-//                 // }
-//             }
-//         }
-//     });
-// }
-
 // Call API for Main Chart Fn
 var initiateData = function() {
     // reset all Charts states
     $('#chart-container-1, #chart-container-2, #tab-chart-1').html('');
 
     // Get WEEKS first
-    // 
     $.ajax({
         type: 'GET',
         url: 'api/getWeek.php',

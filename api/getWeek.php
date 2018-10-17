@@ -1,7 +1,7 @@
 <?php
 include "conn.php";
 
-$query = $db->query("SELECT week FROM perolehan GROUP BY week ORDER BY week");
+$query = $db->query("SELECT week FROM perolehan WHERE week BETWEEN 40 AND 44 GROUP BY week ORDER BY week");
 $rows = array();
 
 if ($query->num_rows > 0) {
