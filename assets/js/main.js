@@ -235,7 +235,7 @@ var showChart = function(w) {
                 // Populating for chart
                 var flData, clData, asData, tsData, pnData, rcData, vnData;
                 rawData.forEach(function(data) {
-                    switch (data.tipe_produk) {
+                    switch (data.produk) {
                         case 'cl':
                             clData = data;
                             break;
@@ -265,16 +265,17 @@ var showChart = function(w) {
                 dataPlan = [{ value: 100 - flData.actual2 }, { value: 100 - clData.actual2 }, { value: 100 - asData.actual2 }, { value: 100 - tsData.actual2 }, { value: 100 - pnData.actual2 }, { value: 100 - vnData.actual2 }, { value: 100 - rcData.actual2 }];
                 dataActual = [{ value: flData.actual2 }, { value: clData.actual2 }, { value: asData.actual2 }, { value: tsData.actual2 }, { value: pnData.actual2 }, { value: vnData.actual2 }, { value: rcData.actual2 }];
 
+                // populating data
+                finalData = {
+                    "categories": dataCategories,
+                    "plan": dataPlan,
+                    "actual": dataActual,
+                };
+
+                console.log(finalData);
+                renderMainChart(finalData);
+
             }
-
-            // populating data
-            finalData = {
-                "categories": dataCategories,
-                "plan": dataPlan,
-                "actual": dataActual,
-            };
-
-            renderMainChart(finalData);
         }
     });
 }
